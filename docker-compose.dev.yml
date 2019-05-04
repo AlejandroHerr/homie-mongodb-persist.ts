@@ -1,15 +1,19 @@
 version: '3'
 
 services:
+  mongo:
+    image: mongo:4
+    restart: always
   mqtt_mongodb_persist:
     image: node:dubnium-slim
     depends_on:
-      - mqtt_server
+      - mongo
     environment:
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
       - MQTT_HOST=localhost
       - MQTT_CLIENT_NAME=mqtt_mongodb_persist
+      - MONGO_HOST=mongo
     tty: true
     working_dir: /mqtt-logger
     volumes:
