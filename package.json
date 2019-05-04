@@ -1,0 +1,67 @@
+{
+  "name": "homie-mongodb-persist.ts",
+  "version": "1.0.0",
+  "description": "Simple app to persiste homie iot elements to mongodb",
+  "keywords": [
+    "mqtt",
+    "homie",
+    "homieiot",
+    "logger",
+    "persist",
+    "mongodb"
+  ],
+  "main": "dist/main/index.js",
+  "typings": "dist/main/index.d.ts",
+  "module": "dist/module/index.js",
+  "author": "Alejandro Hernandez Cobo <hello@alejandroherr.io>",
+  "repository": "git@github.com:AlejandroHerr/homie-mongodb-persist.ts.git",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.9.4",
+    "@typescript-eslint/eslint-plugin": "^1.7.0",
+    "@typescript-eslint/parser": "^1.7.0",
+    "commitizen": "^3.0.5",
+    "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-airbnb-typescript": "^3.0.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-formatter-pretty": "^2.1.1",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.0.0",
+    "nodemon": "^1.19.0",
+    "npm-run-all": "^4.1.5",
+    "pino-pretty": "^2.6.1",
+    "prettier": "^1.16.4",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.1.0"
+  },
+  "dependencies": {
+    "@types/pino": "^5.8.6",
+    "async-mqtt": "^2.2.1",
+    "pino": "^5.12.2",
+    "typescript": "^3.4.4"
+  },
+  "scripts": {
+    "build": "run-s clean && run-p build:*",
+    "build:main": "tsc -p tsconfig.json",
+    "build:module": "tsc -p tsconfig.module.json",
+    "clean": "rm -rf dist",
+    "docker:dev": "COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml && docker-compose up",
+    "docker:start": "COMPOSE_FILE=docker-compose.yml:docker-compose.yml && docker-compose up",
+    "lint": "eslint --cache --format=pretty ./src",
+    "lint:fix": "eslint --cache --format=pretty ./src --fix",
+    "start": "node dist/main/index.js | pino-pretty",
+    "start:dev": "ts-node ./src/index.ts | pino-pretty",
+    "start:dev:watch": "nodemon --config ./nodemon.json",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

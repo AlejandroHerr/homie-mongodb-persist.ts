@@ -1,0 +1,12 @@
+{
+  "restartable": "rs",
+  "ignore": [".git", "node_modules/**/node_modules"],
+  "verbose": true,
+  "exec": "yarn start:dev",
+  "watch": ["src"],
+  "signal": "SIGINT",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "ts"
+}

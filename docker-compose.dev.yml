@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  mqtt_logger:
+    image: node:dubnium-slim
+    depends_on:
+      - mqtt_server
+    environment:
+      - MQTT_PORT=1883
+      - MQTT_PROTOCOL=mqtt
+      - MQTT_HOST=localhost
+      - MQTT_CLIENT_NAME=mqtt_logger
+    tty: true
+    working_dir: /mqtt-logger
+    volumes:
+      - './src/:/mqtt-logger/src'
+      - './nodemon.json:/mqtt-logger/nodemon.json'
+      - './package.json:/mqtt-logger/package.json'
+      - './run-dev.sh:/mqtt-logger/run-dev.sh'
+      - './tsconfig.json:/mqtt-logger/tsconfig.json'
+      - './yarn.lock:/mqtt-logger/yarn.lock'
+    command: 'bash ./run-dev.sh'
