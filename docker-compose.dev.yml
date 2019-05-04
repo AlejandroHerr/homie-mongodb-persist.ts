@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  mqtt_logger:
+  mqtt_mongodb_persist:
     image: node:dubnium-slim
     depends_on:
       - mqtt_server
@@ -9,7 +9,7 @@ services:
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
       - MQTT_HOST=localhost
-      - MQTT_CLIENT_NAME=mqtt_logger
+      - MQTT_CLIENT_NAME=mqtt_mongodb_persist
     tty: true
     working_dir: /mqtt-logger
     volumes:
