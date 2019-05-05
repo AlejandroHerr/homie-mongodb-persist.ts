@@ -1,13 +1,15 @@
 version: 2
 
 aliases:
+  - working_directory: &working_directory ~/homie-mongodb-persist.ts
+  - image: &image circleci/node:dubnium-stretch
   - &defaults
-    working_directory: ~/homie-mongodb-persist.ts
+    working_directory: *working_directory
     docker:
-      - image: 'circleci/node:dubnium-stretch'
+      - image: *image
   - &step_attach_workspace
     attach_workspace:
-      at: ~/homie-mongodb-persist.ts
+      at: *working_directory
 
 jobs:
   checkout:
@@ -32,8 +34,9 @@ jobs:
           root: .
           paths: dist
   test:
+    working_directory: *working_directory
     docker:
-      - image: 'circleci/node:dubnium-stretch'
+      - image: *image
       - image: eclipse-mosquitto:latest
         ports:
           - '1883:1883'
