@@ -2,7 +2,6 @@ import { connect } from 'mqtt';
 
 import config from '../config';
 import AsyncMqttClient from './AsyncMqttClient';
-import asyncDelay from '../utils/asyncDelay';
 
 const waitForMessage = (client: AsyncMqttClient) =>
   new Promise(resolve => {
@@ -76,5 +75,7 @@ describe('AsyncMqttClient', () => {
       Buffer.from('testMessage'),
       {},
     );
+
+    await asyncMqttClient.end();
   });
 });
