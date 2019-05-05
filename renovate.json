@@ -1,5 +1,9 @@
 {
   "extends": [
-    "config:base"
+    "config:base",
+    "group:jestMonorepo",
+    "group:typescript-eslintMonorepo",
+    "group:definitelyTyped",
+    "group:linters"
   ]
 }
