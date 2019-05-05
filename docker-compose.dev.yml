@@ -1,26 +1,38 @@
-version: '3'
+version: '3.4'
 
 services:
-  mongo:
+  mongodb:
     image: mongo:4
     restart: always
-  mqtt_mongodb_persist:
+  mqtt_server:
+    image: eclipse-mosquitto:latest
+    ports:
+      - '1883:1883'
+      - '9001:9001'
+    # volumes:
+    #   - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    #   - ./mosquitto/data:/mosquitto/data
+    #   - ./mosquitto/log:/mosquitto/log
+    restart: always
+  mongodb_persister:
     image: node:dubnium-slim
     depends_on:
-      - mongo
+      - mongodb
+      - mqtt_server
     environment:
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
-      - MQTT_HOST=localhost
-      - MQTT_CLIENT_NAME=mqtt_mongodb_persist
-      - MONGO_HOST=mongo
+      - MQTT_HOST=mqtt_server
+      - MQTT_CLIENT_NAME=homie-mongodb-persister.ts_dev
+      - MONGODB_HOST=mongodb
     tty: true
-    working_dir: /mqtt-logger
+    working_dir: /homie-mongodb-persister.ts
     volumes:
-      - './src/:/mqtt-logger/src'
-      - './nodemon.json:/mqtt-logger/nodemon.json'
-      - './package.json:/mqtt-logger/package.json'
-      - './run-dev.sh:/mqtt-logger/run-dev.sh'
-      - './tsconfig.json:/mqtt-logger/tsconfig.json'
-      - './yarn.lock:/mqtt-logger/yarn.lock'
-    command: 'bash ./run-dev.sh'
+      - './docker/node_modules/:/homie-mongodb-persister.ts/node_modules'
+      - './scripts/installAndWatchDev.sh:/homie-mongodb-persister.ts/installAndWatchDev.sh'
+      - './src/:/homie-mongodb-persister.ts/src'
+      - './nodemon.json:/homie-mongodb-persister.ts/nodemon.json'
+      - './package.json:/homie-mongodb-persister.ts/package.json'
+      - './tsconfig.json:/homie-mongodb-persister.ts/tsconfig.json'
+      - './yarn.lock:/homie-mongodb-persister.ts/yarn.lock'
+    command: ['/bin/sh', './installAndWatchDev.sh']

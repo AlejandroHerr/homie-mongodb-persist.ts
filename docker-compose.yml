@@ -1,17 +1,28 @@
-version: '3'
+version: '3.4'
 
 services:
-  mongo:
+  mongodb:
     image: mongo:4
     restart: always
-  mqtt_mongodb_persist:
+  mosquittos:
+    image: eclipse-mosquitto:latest
+    ports:
+      - '1883:1883'
+      - '9001:9001'
+    # volumes:
+    #   - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    #   - ./mosquitto/data:/mosquitto/data
+    #   - ./mosquitto/log:/mosquitto/log
+    restart: always
+  mqtt_mongodb_persister:
     build: .
     depends_on:
-      - mongo
+      - mongodb
+      - mosquittos
     environment:
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
-      - MQTT_HOST=localhost
-      - MQTT_CLIENT_NAME=mqtt_mongodb_persist
-      - MONGO_HOST=mongo
+      - MQTT_HOST=mosquittos
+      - MQTT_CLIENT_NAME=mqtt_mongodb_persister
+      - MONGODB_HOST=mongodb
     tty: true
