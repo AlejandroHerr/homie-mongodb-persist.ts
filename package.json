@@ -39,8 +39,11 @@
     "ts-node": "^8.1.0"
   },
   "dependencies": {
+    "@types/mqtt": "^2.5.0",
     "@types/pino": "^5.8.6",
     "async-mqtt": "^2.2.1",
+    "mqtt": "^2.18.8",
+    "mqtt-pattern": "^1.2.0",
     "pino": "^5.12.2",
     "typescript": "^3.4.4"
   },
@@ -49,15 +52,19 @@
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
     "clean": "rm -rf dist",
-    "docker:dev": "COMPOSE_FILE=docker-compose.yml:docker-compose.dev.yml && docker-compose up",
-    "docker:start": "COMPOSE_FILE=docker-compose.yml:docker-compose.yml && docker-compose up",
-    "lint": "eslint --cache --format=pretty ./src",
-    "lint:fix": "eslint --cache --format=pretty ./src --fix",
+    "start:docker:dev": "docker-compose -f docker-compose.dev.yml -p homie-mongodb-persist.ts.dev up",
+    "docker:stop": "run-p docker:*:stop",
+    "docker:dev:stop": "docker-compose -p homie-mongodb-persist.ts.dev down --remove-orphans",
+    "docker:test:stop": "docker-compose -p homie-mongodb-persist.ts.test down --remove-orphans",
+    "lint": "eslint --cache --format=pretty ./src/*.ts ./src/**/*.ts",
     "start": "node dist/main/index.js | pino-pretty",
-    "start:dev": "ts-node ./src/index.ts | pino-pretty",
+    "start:dev": "ts-node --files ./src/index.ts | pino-pretty",
     "start:dev:watch": "nodemon --config ./nodemon.json",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watchAll",
+    "test:docker": "run-s test:docker:start test:docker:watch",
+    "test:docker:start": "docker-compose -f docker-compose.test.yml -p homie-mongodb-persist.ts.test up -d",
+    "test:docker:watch": "docker-compose -f docker-compose.test.yml -p homie-mongodb-persist.ts.test exec mongodb_persister /bin/bash ./installAndTest.sh"
   },
   "config": {
     "commitizen": {

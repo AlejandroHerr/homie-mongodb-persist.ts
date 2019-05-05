@@ -1,0 +1,69 @@
+version: 2
+
+aliases:
+  - working_directory: &working_directory ~/homie-mongodb-persist.ts
+  - image: &image circleci/node:dubnium-stretch
+  - &defaults
+    working_directory: *working_directory
+    docker:
+      - image: *image
+  - &step_attach_workspace
+    attach_workspace:
+      at: *working_directory
+
+jobs:
+  checkout:
+    <<: *defaults
+    steps:
+      - checkout
+      - *step_attach_workspace
+      - run:
+          name: 'Install Dependencies'
+          command: 'yarn install'
+      - persist_to_workspace:
+          root: .
+          paths: .
+  build:
+    <<: *defaults
+    steps:
+      - *step_attach_workspace
+      - run:
+          name: build
+          command: 'yarn build'
+      - persist_to_workspace:
+          root: .
+          paths: dist
+  test:
+    working_directory: *working_directory
+    docker:
+      - image: *image
+      - image: eclipse-mosquitto:latest
+        ports:
+          - '1883:1883'
+    steps:
+      - *step_attach_workspace
+      - run:
+          name: Test
+          command: 'yarn test'
+  lint:
+    <<: *defaults
+    steps:
+      - *step_attach_workspace
+      - run:
+          name: Lint
+          command: 'yarn lint'
+
+workflows:
+  version: 2
+  main_flow:
+    jobs:
+      - checkout
+      - build:
+          requires:
+            - checkout
+      - test:
+          requires:
+            - checkout
+      - lint:
+          requires:
+            - checkout
