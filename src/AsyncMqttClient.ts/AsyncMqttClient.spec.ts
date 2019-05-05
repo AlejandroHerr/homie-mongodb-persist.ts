@@ -4,6 +4,13 @@ import config from '../config';
 import AsyncMqttClient from './AsyncMqttClient';
 import asyncDelay from '../utils/asyncDelay';
 
+const waitForMessage = (client: AsyncMqttClient) =>
+  new Promise(resolve => {
+    client.once('message', () => {
+      resolve();
+    });
+  });
+
 const setup = (): Promise<AsyncMqttClient> =>
   new Promise(resolve => {
     const client = connect({
@@ -23,6 +30,8 @@ describe('AsyncMqttClient', () => {
   it('.subscribeToTopic should invoke callback for topic patterns that match', async () => {
     const asyncMqttClient = await setup();
 
+    await asyncMqttClient.subscribe('#');
+
     const PATTERN_WITH_PARAMS = 'test_with_params/+id/#params';
     const PATTERN_WITHOUT_PARAMS = 'test_without_params/+/#';
 
@@ -36,14 +45,14 @@ describe('AsyncMqttClient', () => {
 
     await asyncMqttClient.publish('test', 'testMessage', { qos: 2 });
 
-    await asyncDelay(250);
+    await waitForMessage(asyncMqttClient);
 
     expect(callbackWithParams).toHaveBeenCalledTimes(0);
     expect(callbackWithoutParams).toHaveBeenCalledTimes(0);
 
     await asyncMqttClient.publish('test_with_params/testId/param1/param2', 'testMessage', { qos: 2 });
 
-    await asyncDelay(250);
+    await waitForMessage(asyncMqttClient);
 
     expect(callbackWithParams).toHaveBeenCalledTimes(1);
     expect(callbackWithParams).toHaveBeenCalledWith(
@@ -58,7 +67,7 @@ describe('AsyncMqttClient', () => {
 
     await asyncMqttClient.publish('test_without_params/testId/param1/param2', 'testMessage', { qos: 2 });
 
-    await asyncDelay(250);
+    await waitForMessage(asyncMqttClient);
 
     expect(callbackWithParams).toHaveBeenCalledTimes(0);
     expect(callbackWithoutParams).toHaveBeenCalledTimes(1);
