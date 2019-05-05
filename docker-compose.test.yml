@@ -1,0 +1,37 @@
+version: '3.4'
+
+services:
+  mongodb:
+    image: mongo:4
+    restart: always
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    ports:
+      - '1883:1883'
+    restart: always
+  mongodb_persister:
+    image: node:dubnium
+    depends_on:
+      - mongodb
+      - mosquitto
+    environment:
+      - MQTT_PORT=1883
+      - MQTT_PROTOCOL=mqtt
+      - MQTT_HOST=mosquitto
+      - MQTT_CLIENT_NAME=homie-mongodb-persister.ts_test
+      - MONGODB_HOST=mongodb
+    stdin_open: true
+    tty: true
+    working_dir: /homie-mongodb-persister.ts
+    volumes:
+      - 'node_modules:/homie-mongodb-persister.ts/node_modules'
+      - './scripts/installAndTest.sh:/homie-mongodb-persister.ts/installAndTest.sh'
+      - './src/:/homie-mongodb-persister.ts/src'
+      - './jest.config.js:/homie-mongodb-persister.ts/jest.config.js'
+      - './package.json:/homie-mongodb-persister.ts/package.json'
+      - './tsconfig.json:/homie-mongodb-persister.ts/tsconfig.json'
+      - './yarn.lock:/homie-mongodb-persister.ts/yarn.lock'
+    entrypoint: ['/bin/sh']
+
+volumes:
+  node_modules:
