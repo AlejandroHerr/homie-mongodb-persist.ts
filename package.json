@@ -1,11 +1,12 @@
 {
-  "name": "homie-mongodb-persist.ts",
+  "name": "homie-iot-mongodb.ts",
   "version": "1.0.0",
   "description": "Simple app to persiste homie iot elements to mongodb",
   "keywords": [
     "mqtt",
     "homie",
     "homieiot",
+    "iot",
     "logger",
     "persist",
     "mongodb"
@@ -14,7 +15,7 @@
   "typings": "dist/main/index.d.ts",
   "module": "dist/module/index.js",
   "author": "Alejandro Hernandez Cobo <hello@alejandroherr.io>",
-  "repository": "git@github.com:AlejandroHerr/homie-mongodb-persist.ts.git",
+  "repository": "git@github.com:AlejandroHerr/homie-iot-mongodb.ts.git",
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^24.0.11",
@@ -52,10 +53,10 @@
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
     "clean": "rm -rf dist",
-    "start:docker:dev": "docker-compose -f docker-compose.dev.yml -p homie-mongodb-persist.ts.dev up",
+    "start:docker:dev": "docker-compose -f docker-compose.dev.yml -p homie-iot-mongodb.ts.dev up",
     "docker:stop": "run-p docker:*:stop",
-    "docker:dev:stop": "docker-compose -p homie-mongodb-persist.ts.dev down --remove-orphans",
-    "docker:test:stop": "docker-compose -p homie-mongodb-persist.ts.test down --remove-orphans",
+    "docker:dev:stop": "docker-compose -p homie-iot-mongodb.ts.dev down --remove-orphans",
+    "docker:test:stop": "docker-compose -p homie-iot-mongodb.ts.test down --remove-orphans",
     "lint": "eslint --cache --format=pretty ./src/*.ts ./src/**/*.ts",
     "start": "node dist/main/index.js | pino-pretty",
     "start:dev": "ts-node --files ./src/index.ts | pino-pretty",
@@ -63,8 +64,8 @@
     "test": "jest",
     "test:watch": "jest --watchAll",
     "test:docker": "run-s test:docker:start test:docker:watch",
-    "test:docker:start": "docker-compose -f docker-compose.test.yml -p homie-mongodb-persist.ts.test up -d",
-    "test:docker:watch": "docker-compose -f docker-compose.test.yml -p homie-mongodb-persist.ts.test exec mongodb_persister /bin/bash ./installAndTest.sh"
+    "test:docker:start": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test up -d",
+    "test:docker:watch": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test exec node_app /bin/bash ./installAndTest.sh"
   },
   "config": {
     "commitizen": {

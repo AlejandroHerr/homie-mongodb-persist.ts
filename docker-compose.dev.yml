@@ -14,7 +14,7 @@ services:
     #   - ./mosquitto/data:/mosquitto/data
     #   - ./mosquitto/log:/mosquitto/log
     restart: always
-  mongodb_persister:
+  node_app:
     image: node:dubnium-slim
     depends_on:
       - mongodb
@@ -23,16 +23,16 @@ services:
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
       - MQTT_HOST=mqtt_server
-      - MQTT_CLIENT_NAME=homie-mongodb-persister.ts_dev
+      - MQTT_CLIENT_NAME=homie-iot-mongodb.ts_dev
       - MONGODB_HOST=mongodb
     tty: true
-    working_dir: /homie-mongodb-persister.ts
+    working_dir: /homie-iot-mongodb.ts
     volumes:
-      - './docker/node_modules/:/homie-mongodb-persister.ts/node_modules'
-      - './scripts/installAndWatchDev.sh:/homie-mongodb-persister.ts/installAndWatchDev.sh'
-      - './src/:/homie-mongodb-persister.ts/src'
-      - './nodemon.json:/homie-mongodb-persister.ts/nodemon.json'
-      - './package.json:/homie-mongodb-persister.ts/package.json'
-      - './tsconfig.json:/homie-mongodb-persister.ts/tsconfig.json'
-      - './yarn.lock:/homie-mongodb-persister.ts/yarn.lock'
+      - './docker/node_modules/:/homie-iot-mongodb.ts/node_modules'
+      - './scripts/installAndWatchDev.sh:/homie-iot-mongodb.ts/installAndWatchDev.sh'
+      - './src/:/homie-iot-mongodb.ts/src'
+      - './nodemon.json:/homie-iot-mongodb.ts/nodemon.json'
+      - './package.json:/homie-iot-mongodb.ts/package.json'
+      - './tsconfig.json:/homie-iot-mongodb.ts/tsconfig.json'
+      - './yarn.lock:/homie-iot-mongodb.ts/yarn.lock'
     command: ['/bin/sh', './installAndWatchDev.sh']

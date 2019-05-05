@@ -1,7 +1,7 @@
 version: 2
 
 aliases:
-  - working_directory: &working_directory ~/homie-mongodb-persist.ts
+  - working_directory: &working_directory ~/homie-iot-mongodb.ts
   - image: &image circleci/node:dubnium-stretch
   - &defaults
     working_directory: *working_directory

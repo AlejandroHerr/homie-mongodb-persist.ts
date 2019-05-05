@@ -1,3 +1,3 @@
-# homie-mongodb-persist.ts
+# homie-iot-mongodb.ts
 
 Simple app to persiste homie iot elements to mongodb

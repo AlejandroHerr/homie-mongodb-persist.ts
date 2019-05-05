@@ -4,7 +4,7 @@ services:
   mongodb:
     image: mongo:4
     restart: always
-  mosquittos:
+  mosquitto:
     image: eclipse-mosquitto:latest
     ports:
       - '1883:1883'
@@ -14,15 +14,15 @@ services:
     #   - ./mosquitto/data:/mosquitto/data
     #   - ./mosquitto/log:/mosquitto/log
     restart: always
-  mqtt_mongodb_persister:
+  node_app:
     build: .
     depends_on:
       - mongodb
-      - mosquittos
+      - mosquitto
     environment:
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
-      - MQTT_HOST=mosquittos
-      - MQTT_CLIENT_NAME=mqtt_mongodb_persister
+      - MQTT_HOST=mosquitto
+      - MQTT_CLIENT_NAME=homie-iot-mongodb.ts
       - MONGODB_HOST=mongodb
     tty: true
