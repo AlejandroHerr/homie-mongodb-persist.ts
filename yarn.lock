@@ -3511,6 +3511,11 @@ mkdirp@0.x, mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
+mqtt-match@^1.0.2:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/mqtt-match/-/mqtt-match-1.0.3.tgz#13e65197b0556e57c53633e5c0d757722094776f"
+  integrity sha512-nfeAp+chyjVeIvvrgMhQCfDAIVp/zXX8rtxHQwuAWuapqAdFs1F0kIekG445ps3xs/qFPK6l2xRlAyiqqwbmrQ==
+
 mqtt-packet@^5.6.0:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/mqtt-packet/-/mqtt-packet-5.6.0.tgz#923fb704d0ce0bd6ac81c7e1cc09469b1512d2fd"
@@ -3520,6 +3525,13 @@ mqtt-packet@^5.6.0:
     inherits "^2.0.3"
     process-nextick-args "^2.0.0"
     safe-buffer "^5.1.0"
+
+mqtt-pattern@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/mqtt-pattern/-/mqtt-pattern-1.2.0.tgz#f79a5bb1b567bcd9a69857ba743bc8bef52261d2"
+  integrity sha512-5tvJTrMXcvAWRc4J+YW0pnZOLi20yXFX1R7cjB0291X9aRFPyO+5vbh/kHVwUlNPfJuwijcvrd/AmwDLe1021w==
+  dependencies:
+    mqtt-match "^1.0.2"
 
 mqtt@*, mqtt@^2.3.1:
   version "2.18.8"
