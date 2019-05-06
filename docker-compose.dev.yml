@@ -15,7 +15,7 @@ services:
     #   - ./mosquitto/log:/mosquitto/log
     restart: always
   node_app:
-    image: node:dubnium-slim
+    image: node:dubnium-alpine
     depends_on:
       - mongodb
       - mqtt_server
@@ -28,6 +28,7 @@ services:
     tty: true
     working_dir: /homie-iot-mongodb.ts
     volumes:
+      - 'node_modules:/homie-iot-mongodb.ts/node_modules'
       - './docker/node_modules/:/homie-iot-mongodb.ts/node_modules'
       - './scripts/installAndWatchDev.sh:/homie-iot-mongodb.ts/installAndWatchDev.sh'
       - './src/:/homie-iot-mongodb.ts/src'
@@ -36,3 +37,6 @@ services:
       - './tsconfig.json:/homie-iot-mongodb.ts/tsconfig.json'
       - './yarn.lock:/homie-iot-mongodb.ts/yarn.lock'
     command: ['/bin/sh', './installAndWatchDev.sh']
+
+volumes:
+  node_modules:

@@ -10,7 +10,7 @@ services:
       - '1883:1883'
     restart: always
   node_app:
-    image: node:dubnium
+    image: node:dubnium-alpine
     depends_on:
       - mongodb
       - mosquitto
