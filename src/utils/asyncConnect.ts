@@ -1,18 +1,13 @@
-import { connect, IClientOptions } from 'mqtt';
+import { connect, IClientOptions, AsyncClient } from 'async-mqtt';
 
-import asyncSetTimeout from '../utils/asyncSetTimeout';
+import asyncSetTimeout from './asyncSetTimeout';
 
-import AsyncMqttClient from './AsyncMqttClient';
+export default (options?: Partial<IClientOptions>): Promise<AsyncClient> => {
+  const client = connect(options);
 
-export default (brokerUrl?: string, options?: IClientOptions): Promise<AsyncMqttClient> => {
-  const client = connect(
-    brokerUrl,
-    options,
-  );
+  const asyncMqttClient = new AsyncClient(client);
 
-  const asyncMqttClient = new AsyncMqttClient(client);
-
-  const onConnectPromise = new Promise<AsyncMqttClient>((resolve, reject) => {
+  const onConnectPromise = new Promise<AsyncClient>((resolve, reject) => {
     const onError = (error: Error): void => {
       reject(error);
     };
