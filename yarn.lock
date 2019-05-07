@@ -3533,7 +3533,7 @@ mqtt-pattern@^1.2.0:
   dependencies:
     mqtt-match "^1.0.2"
 
-mqtt@*, mqtt@^2.18.8, mqtt@^2.3.1:
+mqtt@*, mqtt@^2.3.1:
   version "2.18.8"
   resolved "https://registry.yarnpkg.com/mqtt/-/mqtt-2.18.8.tgz#9d213ccab92151accfb21ee8c0860dc6866ab259"
   integrity sha512-3h6oHlPY/yWwtC2J3geraYRtVVoRM6wdI+uchF4nvSSafXPZnaKqF8xnX+S22SU/FcgEAgockVIlOaAX3fkMpA==
