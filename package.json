@@ -62,7 +62,7 @@
     "docker:dev:stop": "docker-compose -f docker-compose.dev.yml -p homie-iot-mongodb.ts.dev down --remove-orphans",
     "docker:test:clean": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test rm",
     "docker:test:stop": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test down --remove-orphans",
-    "lint": "eslint --cache --format=pretty ./src/*.ts ./src/**/*.ts",
+    "lint": "yarn eslint --cache --format=pretty ./src --ext ts",
     "start": "node dist/main/index.js | pino-pretty",
     "start:dev": "ts-node --files ./src/index.ts | pino-pretty",
     "start:dev:watch": "nodemon --config ./nodemon.json",
