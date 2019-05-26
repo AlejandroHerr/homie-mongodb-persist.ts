@@ -1,9 +1,10 @@
 import { IClientOptions } from 'mqtt';
 import deepMerge from '../utils/deepMerge';
 
-import environmentalConfig from './environmentalConfig';
+import { MongoDbConfig } from '../infrastructure/mongoDb/MongoDbClient';
+
 import defaultConfig from './defaultConfig';
-import { MongoDbConfig } from '../infrastructure/MongoDbClient';
+import environmentalConfig from './environmentalConfig';
 
 export interface Config {
   mqtt: IClientOptions;
