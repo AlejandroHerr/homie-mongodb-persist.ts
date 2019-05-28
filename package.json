@@ -60,6 +60,9 @@
     "docker:stop": "run-p docker:*:stop",
     "docker:dev:clean": "docker-compose -f docker-compose.dev.yml -p homie-iot-mongodb.ts.dev rm",
     "docker:dev:stop": "docker-compose -f docker-compose.dev.yml -p homie-iot-mongodb.ts.dev down --remove-orphans",
+    "docker:test:start": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test up -d",
+    "docker:test:watch": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test exec node_app /bin/sh ./scripts/installAndTest.sh",
+    "docker:test:coverage": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test exec node_app /bin/sh ./scripts/installAndTestCoverage.sh",
     "docker:test:clean": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test rm",
     "docker:test:stop": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test down --remove-orphans",
     "lint": "yarn eslint --cache --format=pretty ./src --ext ts",
@@ -67,11 +70,9 @@
     "start:dev": "ts-node --files ./src/index.ts | pino-pretty",
     "start:dev:watch": "nodemon --config ./nodemon.json",
     "start:docker:dev": "docker-compose -f docker-compose.dev.yml -p homie-iot-mongodb.ts.dev up",
-    "test": "jest",
-    "test:watch": "jest --watchAll",
-    "test:docker": "run-s test:docker:start test:docker:watch",
-    "test:docker:start": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test up -d",
-    "test:docker:watch": "docker-compose -f docker-compose.test.yml -p homie-iot-mongodb.ts.test exec node_app /bin/sh ./installAndTest.sh"
+    "test": "run-s docker:test:start docker:test:watch",
+    "test:coverage": "run-s docker:test:start docker:test:coverage",
+    "test:base": "jest"
   },
   "config": {
     "commitizen": {

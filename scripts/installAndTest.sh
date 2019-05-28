@@ -1,2 +1,2 @@
 yarn install
-yarn test:watch
+yarn test:base --watchAll
