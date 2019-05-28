@@ -6,13 +6,6 @@ services:
     restart: always
   mqtt_server:
     image: eclipse-mosquitto:latest
-    ports:
-      - '1883:1883'
-      - '9001:9001'
-    # volumes:
-    #   - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
-    #   - ./mosquitto/data:/mosquitto/data
-    #   - ./mosquitto/log:/mosquitto/log
     restart: always
   node_app:
     image: node:dubnium-alpine
@@ -25,6 +18,8 @@ services:
       - MQTT_HOST=mqtt_server
       - MQTT_CLIENT_NAME=homie-iot-mongodb.ts_dev
       - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=homie-iot-mongodb_ts_dev
     tty: true
     working_dir: /homie-iot-mongodb.ts
     volumes:
