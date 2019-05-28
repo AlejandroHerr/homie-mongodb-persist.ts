@@ -47,7 +47,7 @@ jobs:
       - *step_attach_workspace
       - run:
           name: Test
-          command: 'yarn test'
+          command: 'yarn test --ci --coverage'
     environment:
       MONGODB_DATABASE: homie-iot-mongodb_ts_test
 
