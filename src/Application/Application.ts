@@ -13,23 +13,26 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AsyncResolver<T> = (cradle: any) => Promise<Resolver<T>>;
 
-export interface Provider<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface Provider<T = any> {
   name: string;
   resolver: Resolver<T>;
 }
 
-export interface AsyncProvider<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface AsyncProvider<T = any> {
   name: string;
   asyncResolver: AsyncResolver<T>;
 }
 
-const isAsyncProvider = <T>(provider: Provider<T> | AsyncProvider<T>): provider is AsyncProvider<T> =>
-  !!(provider as AsyncProvider<T>).asyncResolver;
+const isAsyncProvider = (provider: Provider | AsyncProvider): provider is AsyncProvider =>
+  !!(provider as AsyncProvider).asyncResolver;
 
 export default class Application {
   private booted: boolean = false;
 
-  private bootableProviders: Map<string | symbol, AsyncResolver<{}>> = new Map();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private bootableProviders: Map<string | symbol, AsyncResolver<any>> = new Map();
 
   private container: AwilixContainer;
 
@@ -41,30 +44,31 @@ export default class Application {
     this.container = container;
   }
 
-  private registerProvider<T>(provider: Provider<T>) {
+  private registerProvider(provider: Provider) {
     this.container.register(provider.name, provider.resolver);
 
     return this;
   }
 
-  private registerAsyncProvider<T>(asyncProvider: AsyncProvider<T>) {
+  private registerAsyncProvider(asyncProvider: AsyncProvider) {
     this.bootableProviders.set(asyncProvider.name, asyncProvider.asyncResolver);
 
     return this;
   }
 
-  public register<T>(descriptor: (Provider<T> | AsyncProvider<T>)[] | Provider<T> | AsyncProvider<T>) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public register<T = any>(descriptor: (Provider | AsyncProvider)[] | Provider<T> | AsyncProvider<T>) {
     if (Array.isArray(descriptor)) {
-      descriptor.forEach(provider => this.register(provider));
+      descriptor.forEach(provider => this.register<T>(provider));
 
       return this;
     }
 
     if (isAsyncProvider(descriptor)) {
-      return this.registerAsyncProvider<T>(descriptor);
+      return this.registerAsyncProvider(descriptor);
     }
 
-    return this.registerProvider<T>(descriptor);
+    return this.registerProvider(descriptor);
   }
 
   public async boot() {
@@ -88,6 +92,7 @@ export default class Application {
     return this.container.has(name);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public build<T>(targetOrResolver: ClassOrFunctionReturning<T> | Resolver<T>, opts?: BuildResolverOptions<T>) {
     return this.container.build<T>(targetOrResolver, opts);
   }
