@@ -1,5 +1,5 @@
-import { connect, IClientOptions } from 'mqtt';
 import { AsyncClient } from 'async-mqtt';
+import { connect, IClientOptions } from 'mqtt';
 import { Logger } from 'pino';
 
 import asyncSetTimeout from '../../utils/asyncSetTimeout';

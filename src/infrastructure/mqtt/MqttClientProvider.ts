@@ -1,11 +1,11 @@
-import { AsyncClient } from 'async-mqtt';
 import { asFunction } from 'awilix';
+import { AsyncClient } from 'async-mqtt';
 import { Logger } from 'pino';
 
-import { AsyncProvider } from '../Application';
-import { Config } from '../config';
+import { AsyncProvider } from '../../Application';
+import { Config } from '../../config';
 
-import connectAsyncMqttClient from './mqtt/connectAsyncMqttClient';
+import connectAsyncMqttClient from './connectAsyncMqttClient';
 
 const MqttClientProvier: AsyncProvider<AsyncClient> = Object.freeze({
   name: 'mqttClient',
