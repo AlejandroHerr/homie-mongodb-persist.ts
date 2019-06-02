@@ -1,17 +1,16 @@
 import { Collection } from 'mongodb';
 
-import MongoDbClient from '../infrastructure/mongoDb/MongoDbClient';
 import Property, { PropertyIdFields } from '../models/Property';
 
 interface PropertyServiceConstructor {
-  dbClient: MongoDbClient;
+  mongoPropertyCollection: Collection;
 }
 
 export default class PropertyService {
   private collection: Collection;
 
-  public constructor({ dbClient }: PropertyServiceConstructor) {
-    this.collection = dbClient.getCollection('property');
+  public constructor({ mongoPropertyCollection }: PropertyServiceConstructor) {
+    this.collection = mongoPropertyCollection;
   }
 
   public async findOneById(idFields: PropertyIdFields) {

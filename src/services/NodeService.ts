@@ -1,17 +1,16 @@
 import { Collection } from 'mongodb';
 
-import MongoDbClient from '../infrastructure/mongoDb/MongoDbClient';
 import Node, { NodeIdFields } from '../models/Node';
 
 interface NodeServiceConstructor {
-  dbClient: MongoDbClient;
+  mongoNodeCollection: Collection;
 }
 
 export default class NodeService {
   private collection: Collection;
 
-  public constructor({ dbClient }: NodeServiceConstructor) {
-    this.collection = dbClient.getCollection('node');
+  public constructor({ mongoNodeCollection }: NodeServiceConstructor) {
+    this.collection = mongoNodeCollection;
   }
 
   public async findOneById(idFields: NodeIdFields) {

@@ -1,46 +1,53 @@
-import config from '../config';
+import { Collection } from 'mongodb';
 
-import MongoDbClient from '../infrastructure/mongoDb/MongoDbClient';
+import Application from '../Application';
 import Node from '../models/Node';
-import createDbClientStore from '../utils/createDbClientStore';
+import ConfigProvider from '../providers/ConfigProvider';
+import LoggerProvider from '../providers/LoggerProvier';
+import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
+import MongoDbCollectionsProvider from '../providers/MongoDbCollectionsProvider';
+import createApplicationStore from '../utils/createApplicationStore';
 
 import NodeService from './NodeService';
 
-const dbClientStore = createDbClientStore();
+const applicationStore = createApplicationStore();
 
 const setup = () => {
-  const dbClient = dbClientStore.getDbClient();
+  const application = applicationStore.getApplication();
 
-  const nodeService = new NodeService({ dbClient });
+  const nodeService = new NodeService(application.container.cradle);
 
   return {
-    dbClient,
+    mongoNodeCollection: application.resolve<Collection>('mongoNodeCollection'),
     nodeService,
   };
 };
 
 describe('NodeService', () => {
   beforeAll(async () => {
-    const dbClient = await new MongoDbClient().connect({ config: config.mongodb });
+    const application = await Application.createApplication()
+      .register([ConfigProvider, LoggerProvider, MongoDbClientServiceProvider, MongoDbCollectionsProvider])
+      .boot();
 
-    dbClientStore.setDbClient(dbClient);
+    applicationStore.setApplication(application);
   });
 
   afterAll(async () => {
-    const dbClient = dbClientStore.getDbClient();
+    const application = applicationStore.getApplication();
+    const mongoNodeCollection = application.resolve<Collection>('mongoNodeCollection');
 
-    await Promise.all([dbClient.getCollection('node').drop()]);
+    await mongoNodeCollection.drop();
 
-    await dbClient.close();
+    await application.dispose();
   });
 
   describe('findOneById', () => {
     it('should find by id and return a Node', async () => {
-      const { dbClient, nodeService } = setup();
+      const { mongoNodeCollection, nodeService } = setup();
 
       const idFields = { deviceId: 'deviceId', id: 'id' };
 
-      await dbClient.getCollection('node').insertOne(idFields);
+      await mongoNodeCollection.insertOne(idFields);
 
       const foundNode = await nodeService.findOneById(idFields);
 
@@ -60,12 +67,12 @@ describe('NodeService', () => {
 
   describe('.createOneById', () => {
     it('should create a new document for the node', async () => {
-      const { dbClient, nodeService } = setup();
+      const { mongoNodeCollection, nodeService } = setup();
       const idFields = { deviceId: 'deviceId', id: 'nodeId' };
 
       await nodeService.createOneById(idFields);
 
-      const foundNode = await dbClient.getCollection('node').findOne(idFields);
+      const foundNode = await mongoNodeCollection.findOne(idFields);
 
       expect(foundNode).not.toBeNull();
       expect(foundNode.deviceId).toBe(idFields.deviceId);
@@ -73,15 +80,12 @@ describe('NodeService', () => {
     });
 
     it('should not create a duplicate document for the node', async () => {
-      const { dbClient, nodeService } = setup();
+      const { mongoNodeCollection, nodeService } = setup();
       const idFields = { deviceId: 'deviceId', id: 'nodeId' };
 
       await nodeService.createOneById(idFields);
 
-      const foundNodes = await dbClient
-        .getCollection('node')
-        .find({ id: idFields.id })
-        .toArray();
+      const foundNodes = await mongoNodeCollection.find({ id: idFields.id }).toArray();
 
       expect(foundNodes).toHaveLength(1);
       expect(foundNodes[0]).not.toBeNull();
@@ -92,7 +96,7 @@ describe('NodeService', () => {
 
   describe('.updateAttributeById', () => {
     it('should update an attribute in an existing document', async () => {
-      const { dbClient, nodeService } = setup();
+      const { mongoNodeCollection, nodeService } = setup();
 
       const idFields = { deviceId: 'deviceId', id: 'nodeId' };
 
@@ -100,12 +104,10 @@ describe('NodeService', () => {
 
       await nodeService.updateAttributeById(idFields, `$${attribute}`, value);
 
-      await expect(
-        dbClient
-          .getCollection('node')
-          .findOne(idFields)
-          .then(({ attributes }) => attributes),
-      ).resolves.toHaveProperty(attribute, value);
+      await expect(mongoNodeCollection.findOne(idFields).then(({ attributes }) => attributes)).resolves.toHaveProperty(
+        attribute,
+        value,
+      );
     });
 
     it('should throw an error if document does not exist', async () => {

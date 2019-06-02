@@ -1,17 +1,16 @@
 import { Collection } from 'mongodb';
 
-import MongoDbClient from '../infrastructure/mongoDb/MongoDbClient';
 import Device, { DeviceIdFields } from '../models/Device';
 
 interface DeviceServiceConstructor {
-  dbClient: MongoDbClient;
+  mongoDeviceCollection: Collection;
 }
 
 export default class DeviceService {
   private collection: Collection;
 
-  public constructor({ dbClient }: DeviceServiceConstructor) {
-    this.collection = dbClient.getCollection('device');
+  public constructor({ mongoDeviceCollection }: DeviceServiceConstructor) {
+    this.collection = mongoDeviceCollection;
   }
 
   public async findOneById(idFields: DeviceIdFields) {
