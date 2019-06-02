@@ -40,6 +40,7 @@
     "ts-node": "^8.1.0"
   },
   "dependencies": {
+    "@types/glob": "^7.1.1",
     "@types/mongodb": "^3.1.26",
     "@types/mqtt": "^2.5.0",
     "@types/pino": "^5.8.6",
