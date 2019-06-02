@@ -40,11 +40,18 @@ jobs:
       - image: eclipse-mosquitto:latest
         ports:
           - '1883:1883'
+      - image: mongo:4
+        ports:
+          - '27017:27017'
     steps:
       - *step_attach_workspace
       - run:
           name: Test
-          command: 'yarn test'
+          command: 'yarn test:base --ci --coverage'
+    environment:
+      NODE_ENV: testing
+      MONGODB_DATABASE: homie-iot-mongodb_ts_test
+
   lint:
     <<: *defaults
     steps:

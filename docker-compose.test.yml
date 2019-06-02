@@ -6,27 +6,29 @@ services:
     restart: always
   mosquitto:
     image: eclipse-mosquitto:latest
-    ports:
-      - '1883:1883'
     restart: always
   node_app:
-    image: node:dubnium
+    image: node:dubnium-alpine
     depends_on:
       - mongodb
       - mosquitto
     environment:
+      - NODE_ENV=testing
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
       - MQTT_HOST=mosquitto
       - MQTT_CLIENT_NAME=homie-iot-mongodb.ts_test
       - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=homie-iot-mongodb_ts_test
     stdin_open: true
     tty: true
     working_dir: /homie-iot-mongodb.ts
     volumes:
       - 'node_modules:/homie-iot-mongodb.ts/node_modules'
-      - './scripts/installAndTest.sh:/homie-iot-mongodb.ts/installAndTest.sh'
-      - './src/:/homie-iot-mongodb.ts/src'
+      - './coverage:/homie-iot-mongodb.ts/coverage'
+      - './scripts:/homie-iot-mongodb.ts/scripts'
+      - './src:/homie-iot-mongodb.ts/src'
       - './jest.config.js:/homie-iot-mongodb.ts/jest.config.js'
       - './package.json:/homie-iot-mongodb.ts/package.json'
       - './tsconfig.json:/homie-iot-mongodb.ts/tsconfig.json'

@@ -6,28 +6,25 @@ services:
     restart: always
   mqtt_server:
     image: eclipse-mosquitto:latest
-    ports:
-      - '1883:1883'
-      - '9001:9001'
-    # volumes:
-    #   - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
-    #   - ./mosquitto/data:/mosquitto/data
-    #   - ./mosquitto/log:/mosquitto/log
     restart: always
   node_app:
-    image: node:dubnium-slim
+    image: node:dubnium-alpine
     depends_on:
       - mongodb
       - mqtt_server
     environment:
+      - NODE_ENV=testing
       - MQTT_PORT=1883
       - MQTT_PROTOCOL=mqtt
       - MQTT_HOST=mqtt_server
       - MQTT_CLIENT_NAME=homie-iot-mongodb.ts_dev
       - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DATABASE=homie-iot-mongodb_ts_dev
     tty: true
     working_dir: /homie-iot-mongodb.ts
     volumes:
+      - 'node_modules:/homie-iot-mongodb.ts/node_modules'
       - './docker/node_modules/:/homie-iot-mongodb.ts/node_modules'
       - './scripts/installAndWatchDev.sh:/homie-iot-mongodb.ts/installAndWatchDev.sh'
       - './src/:/homie-iot-mongodb.ts/src'
@@ -36,3 +33,6 @@ services:
       - './tsconfig.json:/homie-iot-mongodb.ts/tsconfig.json'
       - './yarn.lock:/homie-iot-mongodb.ts/yarn.lock'
     command: ['/bin/sh', './installAndWatchDev.sh']
+
+volumes:
+  node_modules:
