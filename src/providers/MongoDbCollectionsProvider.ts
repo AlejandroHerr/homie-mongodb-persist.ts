@@ -1,11 +1,10 @@
 import { asValue } from 'awilix';
 import { Db, Collection } from 'mongodb';
 
-import { AsyncProvider, Provider } from '../../Application';
-
-import initDeviceCollection from './collections/initDeviceCollection';
-import initNodeCollection from './collections/initNodeCollection';
-import initPropertyCollection from './collections/initPropertyCollection';
+import { AsyncProvider, Provider } from '../Application';
+import initDeviceCollection from '../infrastructure/mongoDb/collections/initDeviceCollection';
+import initNodeCollection from '../infrastructure/mongoDb/collections/initNodeCollection';
+import initPropertyCollection from '../infrastructure/mongoDb/collections/initPropertyCollection';
 
 const gerCollectionProviderName = (collactionName: string) =>
   `mongo${collactionName.charAt(0).toUpperCase() + collactionName.slice(1)}Collection`;

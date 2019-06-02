@@ -2,8 +2,8 @@ import { asFunction } from 'awilix';
 import { MongoClient, Db } from 'mongodb';
 import { Logger } from 'pino';
 
-import { AsyncProvider } from '../../Application';
-import { Config } from '../../config';
+import { AsyncProvider } from '../Application';
+import { Config } from '../config';
 
 const MongoDbClientServiceProvider: AsyncProvider<Db> = Object.freeze({
   name: 'mongoDbClient',
