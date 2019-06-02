@@ -1,35 +1,50 @@
-import { connect, AsyncMqttClient } from 'async-mqtt';
+import { AsyncMqttClient, AsyncClient } from 'async-mqtt';
 
-import config from '../config';
 import MQTTRouter from './MQTTRouter';
+import Application from '../Application';
+import MqttClientProvier from '../providers/MqttClientProvider';
+import createApplicationStore from '../utils/createApplicationStore';
+import ConfigProvider from '../providers/ConfigProvider';
+import LoggerProvider from '../providers/LoggerProvier';
 
-const waitForMessage = (client: AsyncMqttClient) =>
+const applicationStore = createApplicationStore();
+
+const waitForMessage = (mqttClient: AsyncMqttClient) =>
   new Promise(resolve => {
-    client.once('message', () => {
+    mqttClient.once('message', () => {
       resolve();
     });
   });
 
-const setup = (): Promise<{ client: AsyncMqttClient; mqttRouter: MQTTRouter }> =>
-  new Promise(resolve => {
-    const client = connect({
-      port: config.MQTT_PORT,
-      protocol: config.MQTT_PROTOCOL,
-      host: config.MQTT_HOST,
-      clientId: `MqttRouterTestClient`,
-    });
+const setup = () => {
+  const application = applicationStore.getApplication();
 
-    client.on('connect', () => {
-      const mqttRouter = new MQTTRouter(client);
-      resolve({ client, mqttRouter });
-    });
-  });
+  const mqttRouter = new MQTTRouter(application.container.cradle);
+
+  return {
+    mqttClient: application.resolve<AsyncClient>('mqttClient'),
+    mqttRouter,
+  };
+};
 
 describe('MQTTRouter', () => {
-  it('.routeTopic should invoke callback for topic patterns that match', async () => {
-    const { client, mqttRouter } = await setup();
+  beforeAll(async () => {
+    const application = await Application.createApplication()
+      .register(ConfigProvider, LoggerProvider, MqttClientProvier)
+      .boot();
 
-    await client.subscribe('#');
+    applicationStore.setApplication(application);
+  });
+
+  afterAll(async () => {
+    const application = applicationStore.getApplication();
+
+    await application.dispose();
+  });
+  it('.routeTopic should invoke callback for topic patterns that match', async () => {
+    const { mqttClient, mqttRouter } = await setup();
+
+    await mqttClient.subscribe('#');
 
     const PATTERN_WITH_PARAMS = 'router_with_params/+id/#params';
     const PATTERN_WITHOUT_PARAMS = 'routed_without_params/+/#';
@@ -42,16 +57,16 @@ describe('MQTTRouter', () => {
       mqttRouter.routeTopic(PATTERN_WITHOUT_PARAMS, callbackWithoutParams),
     ]);
 
-    await client.publish('test', 'testMessage', { qos: 0, retain: false });
+    await mqttClient.publish('test', 'testMessage', { qos: 0, retain: false });
 
-    await waitForMessage(client);
+    await waitForMessage(mqttClient);
 
     expect(callbackWithParams).toHaveBeenCalledTimes(0);
     expect(callbackWithoutParams).toHaveBeenCalledTimes(0);
 
-    await client.publish('router_with_params/testId/param1/param2', 'testMessage', { qos: 0, retain: false });
+    await mqttClient.publish('router_with_params/testId/param1/param2', 'testMessage', { qos: 0, retain: false });
 
-    await waitForMessage(client);
+    await waitForMessage(mqttClient);
 
     expect(callbackWithParams).toHaveBeenCalledTimes(1);
     expect(callbackWithParams).toHaveBeenCalledWith(
@@ -64,9 +79,9 @@ describe('MQTTRouter', () => {
     callbackWithParams.mockReset();
     callbackWithoutParams.mockReset();
 
-    await client.publish('routed_without_params/testId/param1/param2', 'testMessage', { qos: 0, retain: false });
+    await mqttClient.publish('routed_without_params/testId/param1/param2', 'testMessage', { qos: 0, retain: false });
 
-    await waitForMessage(client);
+    await waitForMessage(mqttClient);
 
     expect(callbackWithParams).toHaveBeenCalledTimes(0);
     expect(callbackWithoutParams).toHaveBeenCalledTimes(1);
@@ -76,6 +91,6 @@ describe('MQTTRouter', () => {
       {},
     );
 
-    await client.end();
+    await mqttClient.end();
   });
 });

@@ -1,14 +1,15 @@
-import MQTTPattern from 'mqtt-pattern';
 import { AsyncClient } from 'async-mqtt';
 
-export type OnTopicMessageCallback = (
-  topic: string,
-  message: Buffer,
-  params: Record<string, string | string[]> | null,
-) => void;
+import mqttPattern from '../mqttPattern';
 
-export default class MqttRouter {
-  private client!: AsyncClient;
+import { OnTopicMessageCallback } from './types';
+
+interface MQTTRouterConstructor {
+  mqttClient: AsyncClient;
+}
+
+export default class MQTTRouter {
+  private mqttClient: AsyncClient;
 
   private isSubscribed: boolean = false;
 
@@ -16,8 +17,8 @@ export default class MqttRouter {
 
   private routedTopicCallbacks: Record<string, OnTopicMessageCallback> = {};
 
-  public constructor(client: AsyncClient) {
-    this.client = client;
+  public constructor({ mqttClient }: MQTTRouterConstructor) {
+    this.mqttClient = mqttClient;
   }
 
   public async subscribe() {
@@ -27,7 +28,7 @@ export default class MqttRouter {
 
     this.isSubscribed = true;
 
-    await this.client.on('message', this.topicRouter.bind(this));
+    await this.mqttClient.on('message', this.topicRouter.bind(this));
 
     return this;
   }
@@ -35,12 +36,12 @@ export default class MqttRouter {
   private topicRouter(topic: string, message: Buffer): void {
     // eslint-disable-next-line no-restricted-syntax
     for (const routedTopic of this.routedTopics) {
-      const params = MQTTPattern.exec(routedTopic, topic);
+      const params = mqttPattern.exec(routedTopic, topic);
 
       if (params) {
         const callback = this.routedTopicCallbacks[routedTopic];
 
-        callback(topic, message, params);
+        callback(topic, message, params || {});
 
         break;
       }
@@ -55,7 +56,7 @@ export default class MqttRouter {
       await this.subscribe();
     }
 
-    await this.client.subscribe(MQTTPattern.clean(topic));
+    await this.mqttClient.subscribe(mqttPattern.clean(topic));
 
     return this;
   }
