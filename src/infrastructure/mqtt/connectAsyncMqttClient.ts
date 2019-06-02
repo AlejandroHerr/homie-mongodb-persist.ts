@@ -1,4 +1,4 @@
-import { AsyncClient } from 'async-mqtt';
+import { AsyncClient, IMqttClient } from 'async-mqtt';
 import { connect } from 'mqtt';
 import { Logger } from 'pino';
 
@@ -13,7 +13,7 @@ const onTimeout = () =>
 const onConnect = (options: MqttConfig) => {
   const client = connect(options);
 
-  const asyncClient = new AsyncClient(client);
+  const asyncClient = new AsyncClient(client as IMqttClient);
 
   return new Promise<AsyncClient>((resolve, reject) => {
     const onError = (error: Error): void => {
