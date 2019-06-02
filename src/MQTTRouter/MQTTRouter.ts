@@ -1,6 +1,6 @@
 import { AsyncClient } from 'async-mqtt';
 
-import mqttPattern from '../mqttPattern';
+import mqttPattern from '../libs/mqttPattern';
 
 import { OnTopicMessageCallback } from './types';
 
