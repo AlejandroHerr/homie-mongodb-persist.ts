@@ -1,11 +1,11 @@
 import { AsyncMqttClient, AsyncClient } from 'async-mqtt';
 
-import MQTTRouter from './MQTTRouter';
 import Application from '../Application';
-import MqttClientProvier from '../providers/MqttClientProvider';
-import createApplicationStore from '../utils/createApplicationStore';
 import ConfigProvider from '../providers/ConfigProvider';
-import LoggerProvider from '../providers/LoggerProvier';
+import MQTTClientProvider from '../providers/MQTTClientProvider';
+import createApplicationStore from '../utils/createApplicationStore';
+
+import MQTTRouter from './MQTTRouter';
 
 const applicationStore = createApplicationStore();
 
@@ -30,7 +30,7 @@ const setup = () => {
 describe('MQTTRouter', () => {
   beforeAll(async () => {
     const application = await Application.createApplication()
-      .register(ConfigProvider, LoggerProvider, MqttClientProvier)
+      .register(ConfigProvider, MQTTClientProvider)
       .boot();
 
     applicationStore.setApplication(application);
