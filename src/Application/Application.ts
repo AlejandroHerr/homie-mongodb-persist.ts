@@ -6,20 +6,23 @@ import {
   BuildResolverOptions,
   ClassOrFunctionReturning,
   ResolveOptions,
-  Resolver,
   ContainerOptions,
 } from 'awilix';
 
-import { AsyncProvider, AsyncResolver, Provider } from './types';
-
-const isAsyncProvider = (provider: Provider | AsyncProvider): provider is AsyncProvider =>
-  !!(provider as AsyncProvider).asyncResolver;
+import {
+  AsyncProvider,
+  AsyncResolver,
+  Provider,
+  Resolver,
+  isProvider,
+  isProviderArray,
+  isAsyncProvider,
+} from './types';
 
 export default class Application {
   private booted: boolean = false;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private bootableProviders: Map<string | symbol, AsyncResolver<any>> = new Map();
+  private bootableProviders: Map<string | symbol, AsyncResolver> = new Map();
 
   private container: AwilixContainer;
 
@@ -37,16 +40,16 @@ export default class Application {
     return this;
   }
 
-  private registerAsyncProvider(asyncProvider: AsyncProvider) {
-    this.bootableProviders.set(asyncProvider.name, asyncProvider.asyncResolver);
+  private registerAsyncProvider({ name, asyncResolver }: AsyncProvider) {
+    this.bootableProviders.set(name, asyncResolver);
 
     return this;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public register<T = any>(descriptor: (Provider | AsyncProvider)[] | Provider<T> | AsyncProvider<T>) {
+  public register(descriptor: (Provider | AsyncProvider)[] | Provider | AsyncProvider) {
     if (Array.isArray(descriptor)) {
-      descriptor.forEach(provider => this.register<T>(provider));
+      descriptor.forEach(provider => this.register(provider));
 
       return this;
     }
@@ -67,9 +70,13 @@ export default class Application {
 
     // eslint-disable-next-line no-restricted-syntax
     for await (const [name, asyncResolver] of this.bootableProviders) {
-      const resolver = await this.container.build(asFunction(asyncResolver));
+      const resolverOrProvider = await this.container.build(asFunction(asyncResolver));
 
-      this.container.register(name, resolver);
+      if (isProviderArray(resolverOrProvider) || isProvider(resolverOrProvider)) {
+        this.register(resolverOrProvider);
+      } else {
+        this.container.register(name, resolverOrProvider);
+      }
     }
 
     return this;
@@ -79,7 +86,6 @@ export default class Application {
     return this.container.has(name);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public build<T>(targetOrResolver: ClassOrFunctionReturning<T> | Resolver<T>, opts?: BuildResolverOptions<T>) {
     return this.container.build<T>(targetOrResolver, opts);
   }
