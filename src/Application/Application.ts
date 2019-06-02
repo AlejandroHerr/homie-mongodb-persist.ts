@@ -24,7 +24,7 @@ export default class Application {
 
   private bootableProviders: Map<string | symbol, AsyncResolver> = new Map();
 
-  private container: AwilixContainer;
+  public readonly container: AwilixContainer;
 
   public static createApplication(options?: ContainerOptions) {
     return new Application({ container: createContainer(options) });
@@ -47,18 +47,16 @@ export default class Application {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public register(descriptor: (Provider | AsyncProvider)[] | Provider | AsyncProvider) {
-    if (Array.isArray(descriptor)) {
-      descriptor.forEach(provider => this.register(provider));
+  public register(...descriptors: (Provider | AsyncProvider)[]) {
+    descriptors.forEach(descriptor => {
+      if (isAsyncProvider(descriptor)) {
+        return this.registerAsyncProvider(descriptor);
+      }
 
-      return this;
-    }
+      return this.registerProvider(descriptor);
+    });
 
-    if (isAsyncProvider(descriptor)) {
-      return this.registerAsyncProvider(descriptor);
-    }
-
-    return this.registerProvider(descriptor);
+    return this;
   }
 
   public async boot() {
@@ -72,7 +70,9 @@ export default class Application {
     for await (const [name, asyncResolver] of this.bootableProviders) {
       const resolverOrProvider = await this.container.build(asFunction(asyncResolver));
 
-      if (isProviderArray(resolverOrProvider) || isProvider(resolverOrProvider)) {
+      if (isProviderArray(resolverOrProvider)) {
+        this.register(...resolverOrProvider);
+      } else if (isProvider(resolverOrProvider)) {
         this.register(resolverOrProvider);
       } else {
         this.container.register(name, resolverOrProvider);

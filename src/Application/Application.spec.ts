@@ -2,6 +2,7 @@ import util from 'util';
 import { createContainer, asValue } from 'awilix';
 
 import Application from './Application';
+import { AsyncProvider } from '.';
 
 const setup = () => {
   const container = createContainer();
@@ -27,7 +28,7 @@ describe('Application', () => {
   describe('should compose AwilixContainer', () => {
     const { application, container } = setup();
 
-    it('.register should register a dependency in the AwilixContainer', () => {
+    it('.register should register a provider in the AwilixContainer', () => {
       const value = 'test0';
       const provider = { name: 'name0', resolver: asValue(value) };
 
@@ -37,14 +38,14 @@ describe('Application', () => {
       expect(application.resolve(provider.name)).toBe(value);
     });
 
-    it('.register should should register an array of dependency in the AwilixContainer', () => {
+    it('.register should register as many providers as arguments', () => {
       const values = ['test2', 'test3'];
       const providers = [
         { name: 'name2', resolver: asValue(values[0]) },
         { name: 'name3', resolver: asValue(values[1]) },
       ];
 
-      application.register(providers);
+      application.register(...providers);
 
       providers.forEach((provider, index) => {
         expect(application.has(provider.name)).toBeTruthy();
@@ -106,7 +107,7 @@ describe('Application', () => {
         { name: 'name1', asyncResolver: ({ name0 }: { name0: string }) => Promise.resolve(asValue(name0)) },
       ];
 
-      application.register(providers);
+      application.register(...providers);
 
       providers.forEach(provider => {
         expect(application.has(provider.name)).toBeFalsy();
@@ -123,9 +124,9 @@ describe('Application', () => {
     it('.boot should not boot again if it is already booted', async () => {
       const { application } = setup();
 
-      const provider = { name: 'name', asyncResolver: jest.fn() };
+      const provider = { name: 'name', asyncResolver: jest.fn(() => Promise.resolve({})) };
 
-      application.register(provider);
+      application.register((provider as unknown) as AsyncProvider);
 
       await application.boot();
       await application.boot();

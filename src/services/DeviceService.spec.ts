@@ -26,7 +26,7 @@ const setup = () => {
 describe('DeviceService', () => {
   beforeAll(async () => {
     const application = await Application.createApplication()
-      .register([ConfigProvider, LoggerProvider, MongoDbClientServiceProvider, MongoDbCollectionsProvider])
+      .register(ConfigProvider, LoggerProvider, MongoDbClientServiceProvider, MongoDbCollectionsProvider)
       .boot();
 
     applicationStore.setApplication(application);
