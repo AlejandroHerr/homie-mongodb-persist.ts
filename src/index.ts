@@ -3,7 +3,7 @@ import MQTTClientProvider from './providers/MQTTClientProvider';
 import MongoDbClientServiceProvider from './providers/MongoDbClientProvider';
 import MongoDbCollectionsProvider from './providers/MongoDbCollectionsProvider';
 import ConfigProvider from './providers/ConfigProvider';
-import LoggerProvider from './providers/LoggerProvier';
+import LoggerProvider from './providers/LoggerProvider';
 
 Application.createApplication()
   .register(

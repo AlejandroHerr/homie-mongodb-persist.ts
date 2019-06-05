@@ -28,7 +28,7 @@ export default class DeviceService {
       const foundDevice = await this.findOneById(idFields);
 
       if (!foundDevice) {
-        await this.collection.insertOne(new Device(idFields));
+        await this.collection.insertOne(idFields);
       }
 
       return this;

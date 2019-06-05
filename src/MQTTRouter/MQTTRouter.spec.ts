@@ -2,7 +2,7 @@ import { AsyncMqttClient, AsyncClient } from 'async-mqtt';
 
 import Application from '../Application';
 import ConfigProvider from '../providers/ConfigProvider';
-import LoggerProvider from '../providers/LoggerProvier';
+import LoggerProvider from '../providers/LoggerProvider';
 import MQTTClientProvider from '../providers/MQTTClientProvider';
 import createApplicationStore from '../utils/createApplicationStore';
 

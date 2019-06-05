@@ -3,7 +3,7 @@ import { Collection } from 'mongodb';
 import Application from '../Application';
 import Node from '../models/Node';
 import ConfigProvider from '../providers/ConfigProvider';
-import LoggerProvider from '../providers/LoggerProvier';
+import LoggerProvider from '../providers/LoggerProvider';
 import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
 import MongoDbCollectionsProvider from '../providers/MongoDbCollectionsProvider';
 import createApplicationStore from '../utils/createApplicationStore';
