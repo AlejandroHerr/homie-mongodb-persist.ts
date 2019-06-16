@@ -20,14 +20,11 @@ const onConnect = (options: MqttConfig) => {
       reject(error);
     };
     asyncClient.once('error', onError);
-    asyncClient.once(
-      'connect',
-      (): void => {
-        asyncClient.removeListener('error', onError);
+    asyncClient.once('connect', (): void => {
+      asyncClient.removeListener('error', onError);
 
-        resolve(asyncClient);
-      },
-    );
+      resolve(asyncClient);
+    });
   });
 };
 
