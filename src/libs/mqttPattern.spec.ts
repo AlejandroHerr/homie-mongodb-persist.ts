@@ -1,5 +1,3 @@
-import originalMqttPattern from 'mqtt-pattern';
-
 import mqttPattern from './mqttPattern';
 
 describe('lib/mqttPatern', () => {
