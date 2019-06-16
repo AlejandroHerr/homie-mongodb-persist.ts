@@ -1,9 +1,5 @@
-import Property from './Property';
+import Property, { PropertyUniqueFields } from './Property';
+import propertyFactory from './propertyFactory';
 
 export default Property;
-
-export interface PropertyIdFields {
-  deviceId: string;
-  nodeId: string;
-  id: string;
-}
+export { PropertyUniqueFields, propertyFactory };

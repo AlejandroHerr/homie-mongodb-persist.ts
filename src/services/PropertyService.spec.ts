@@ -5,7 +5,8 @@ import Property from '../models/Property';
 import ConfigProvider from '../providers/ConfigProvider';
 import LoggerProvider from '../providers/LoggerProvider';
 import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
-import MongoDbCollectionsProvider from '../providers/MongoDbCollectionsProvider';
+import PropertyCollectionProvider from '../providers/PropertyCollectionProvider';
+import PropertyFactoryProvider from '../providers/PropertyFactoryProvider';
 import createApplicationStore from '../utils/createApplicationStore';
 
 import PropertyService from './PropertyService';
@@ -23,10 +24,16 @@ const setup = () => {
   };
 };
 
-describe('PropertyService', () => {
+describe('services/PropertyService', () => {
   beforeAll(async () => {
     const application = await Application.createApplication()
-      .register(ConfigProvider, LoggerProvider, MongoDbClientServiceProvider, MongoDbCollectionsProvider)
+      .register(
+        ConfigProvider,
+        LoggerProvider,
+        MongoDbClientServiceProvider,
+        PropertyCollectionProvider,
+        PropertyFactoryProvider,
+      )
       .boot();
 
     applicationStore.setApplication(application);

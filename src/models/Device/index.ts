@@ -1,7 +1,5 @@
-import Device from './Device';
+import Device, { DeviceUniqueFields } from './Device';
+import deviceFactory from './deviceFactory';
 
 export default Device;
-
-export interface DeviceIdFields {
-  id: string;
-}
+export { DeviceUniqueFields, deviceFactory };

@@ -2,10 +2,11 @@ import { Collection } from 'mongodb';
 
 import Application from '../Application';
 import Device from '../models/Device';
-import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
-import MongoDbCollectionsProvider from '../providers/MongoDbCollectionsProvider';
 import ConfigProvider from '../providers/ConfigProvider';
+import DeviceCollectionProvider from '../providers/DeviceCollectionProvider';
+import DeviceFactoryProvider from '../providers/DeviceFactoryProvider';
 import LoggerProvider from '../providers/LoggerProvider';
+import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
 import createApplicationStore from '../utils/createApplicationStore';
 
 import DeviceService from './DeviceService';
@@ -23,10 +24,16 @@ const setup = () => {
   };
 };
 
-describe('DeviceService', () => {
+describe('srvices/DeviceService', () => {
   beforeAll(async () => {
     const application = await Application.createApplication()
-      .register(ConfigProvider, LoggerProvider, MongoDbClientServiceProvider, MongoDbCollectionsProvider)
+      .register(
+        ConfigProvider,
+        LoggerProvider,
+        MongoDbClientServiceProvider,
+        DeviceCollectionProvider,
+        DeviceFactoryProvider,
+      )
       .boot();
 
     applicationStore.setApplication(application);

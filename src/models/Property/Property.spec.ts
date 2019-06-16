@@ -1,7 +1,8 @@
 import defaultPropertyAttributes from './defaultPropertyAttributes';
 import Property from './Property';
+import { PropertyUniqueFields } from '.';
 
-describe('Property', () => {
+describe('models/Property', () => {
   it('should create an Property with default values', () => {
     const props = {
       deviceId: 'testDeviceId',
@@ -61,5 +62,16 @@ describe('Property', () => {
     expect(property.value).toBe(props.value);
   });
 
-  it.todo('.toMqttMessage should return the topic message pairs repsenting the property');
+  it('.getUniqueFields should return propertyUniqueFields', () => {
+    const props = {
+      deviceId: 'testDeviceId',
+      nodeId: 'testNodeId',
+      id: 'testId',
+    };
+    const property = new Property(props);
+
+    const propertyUniqueFields: PropertyUniqueFields = property.getUniqueFields();
+
+    expect(propertyUniqueFields).toEqual({ deviceId: 'testDeviceId', nodeId: 'testNodeId', id: 'testId' });
+  });
 });

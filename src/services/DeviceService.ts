@@ -1,51 +1,51 @@
 import { Collection } from 'mongodb';
 
-import Device, { DeviceIdFields } from '../models/Device';
+import { DeviceUniqueFields, deviceFactory } from '../models/Device';
 
 interface DeviceServiceConstructor {
+  deviceFactory: typeof deviceFactory;
   mongoDeviceCollection: Collection;
 }
 
 export default class DeviceService {
   private collection: Collection;
 
-  public constructor({ mongoDeviceCollection }: DeviceServiceConstructor) {
+  private modelFactory: typeof deviceFactory;
+
+  public constructor({ deviceFactory: modelFactory, mongoDeviceCollection }: DeviceServiceConstructor) {
     this.collection = mongoDeviceCollection;
+    this.modelFactory = modelFactory;
   }
 
-  public async findOneById(idFields: DeviceIdFields) {
-    const foundDevice = await this.collection.findOne(idFields);
+  public async findOneById(modelFactory: DeviceUniqueFields) {
+    const foundDevice = await this.collection.findOne(modelFactory);
 
     if (!foundDevice) {
       return null;
     }
 
-    return new Device(foundDevice);
+    return this.modelFactory(foundDevice);
   }
 
-  public async createOneById(idFields: DeviceIdFields) {
-    try {
-      const foundDevice = await this.findOneById(idFields);
+  public async createOneById(modelFactory: DeviceUniqueFields) {
+    const foundDevice = await this.findOneById(modelFactory);
 
-      if (!foundDevice) {
-        await this.collection.insertOne(idFields);
-      }
-
-      return this;
-    } catch (error) {
-      throw error;
+    if (!foundDevice) {
+      await this.collection.insertOne(modelFactory);
     }
+
+    return this;
   }
 
-  public async updateAttributeById(idFields: DeviceIdFields, attribute: string, value: string | number) {
+  public async updateAttributeById(modelFactory: DeviceUniqueFields, attribute: string, value: string | number) {
     try {
       const key = attribute.replace('$', '');
       const update = { $set: { [`attributes.${key}`]: value } };
 
-      const { result } = await this.collection.updateOne(idFields, update);
+      const { result } = await this.collection.updateOne(modelFactory, update);
 
       if (result.n === 0) {
-        throw new Error(`Device with ${JSON.stringify(idFields)} not found`);
+        throw new Error(`Device with ${JSON.stringify(modelFactory)} not found`);
       }
 
       return this;

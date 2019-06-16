@@ -1,51 +1,51 @@
 import { Collection } from 'mongodb';
 
-import Node, { NodeIdFields } from '../models/Node';
+import { NodeUniqueFields, nodeFactory } from '../models/Node';
 
 interface NodeServiceConstructor {
   mongoNodeCollection: Collection;
+  nodeFactory: typeof nodeFactory;
 }
 
 export default class NodeService {
   private collection: Collection;
 
-  public constructor({ mongoNodeCollection }: NodeServiceConstructor) {
+  private modelFactory: typeof nodeFactory;
+
+  public constructor({ mongoNodeCollection, nodeFactory: modelFactory }: NodeServiceConstructor) {
     this.collection = mongoNodeCollection;
+    this.modelFactory = modelFactory;
   }
 
-  public async findOneById(idFields: NodeIdFields) {
-    const foundNode = await this.collection.findOne(idFields);
+  public async findOneById(uniqueFields: NodeUniqueFields) {
+    const foundNode = await this.collection.findOne(uniqueFields);
 
     if (!foundNode) {
       return null;
     }
 
-    return new Node(foundNode);
+    return this.modelFactory(foundNode);
   }
 
-  public async createOneById(idFields: NodeIdFields) {
-    try {
-      const foundNode = await this.findOneById(idFields);
+  public async createOneById(uniqueFields: NodeUniqueFields) {
+    const foundNode = await this.findOneById(uniqueFields);
 
-      if (!foundNode) {
-        await this.collection.insertOne(new Node(idFields));
-      }
-
-      return this;
-    } catch (error) {
-      throw error;
+    if (!foundNode) {
+      await this.collection.insertOne(uniqueFields);
     }
+
+    return this;
   }
 
-  public async updateAttributeById(idFields: NodeIdFields, attribute: string, value: string | number) {
+  public async updateAttributeById(uniqueFields: NodeUniqueFields, attribute: string, value: string | number) {
     try {
       const key = attribute.replace('$', '');
       const update = { $set: { [`attributes.${key}`]: value } };
 
-      const { result } = await this.collection.updateOne(idFields, update);
+      const { result } = await this.collection.updateOne(uniqueFields, update);
 
       if (result.n === 0) {
-        throw new Error(`Node with ${JSON.stringify(idFields)} not found`);
+        throw new Error(`Node with ${JSON.stringify(uniqueFields)} not found`);
       }
 
       return this;
