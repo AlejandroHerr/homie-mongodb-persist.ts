@@ -1510,10 +1510,10 @@ eslint-config-airbnb-base@13.1.0, eslint-config-airbnb-base@^13.1.0:
     object.assign "^4.1.0"
     object.entries "^1.0.4"
 
-eslint-config-airbnb-typescript@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-airbnb-typescript/-/eslint-config-airbnb-typescript-3.0.0.tgz#5176af082142f4887c96994768c0b7aa9d6338ea"
-  integrity sha512-Q4Xfgfsj3gRQJARcM3skQL7SDSqRc47Z9iAwjyrv94RWHLgvarlpc0fqLeVuEUMBqdmx8OVRLqBZqVJpBnO3cQ==
+eslint-config-airbnb-typescript@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-airbnb-typescript/-/eslint-config-airbnb-typescript-4.0.0.tgz#98d20bfd0cb18f4a4c7c309e48ad2adc3c3ab4de"
+  integrity sha512-eB/eLUE9JT7F7/HDYhIL3iBOER7fi+k6A2F24CZ5E+kJizEnvrfXMerBrAVP+8gEzQCRGAsJFed/7GYlhDkomw==
   dependencies:
     eslint-config-airbnb "^17.1.0"
     eslint-config-airbnb-base "^13.1.0"
@@ -1527,10 +1527,10 @@ eslint-config-airbnb@^17.1.0:
     object.assign "^4.1.0"
     object.entries "^1.0.4"
 
-eslint-config-prettier@4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-4.1.0.tgz#181364895899fff9fd3605fecb5c4f20e7d5f395"
-  integrity sha512-zILwX9/Ocz4SV2vX7ox85AsrAgXV3f2o2gpIicdMIOra48WYqgUnWNH/cR/iHtmD2Vb3dLSC3LiEJnS05Gkw7w==
+eslint-config-prettier@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-5.0.0.tgz#f7a94b2b8ae7cbf25842c36fa96c6d32cd0a697c"
+  integrity sha512-c17Aqiz5e8LEqoc/QPmYnaxQFAHTx2KlCZBPxXXjEMmNchOLnV/7j0HoPZuC+rL/tDC9bazUYOKJW9bOhftI/w==
   dependencies:
     get-stdin "^6.0.0"
 
