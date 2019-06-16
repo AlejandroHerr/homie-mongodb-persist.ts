@@ -1,11 +1,14 @@
 import { Db } from 'mongodb';
 
-const COLLECTION_NAME = 'device';
+const collectionName = 'device';
 
-export default async (db: Db) => {
-  const collection = db.collection(COLLECTION_NAME);
+export default Object.freeze({
+  collectionName,
+  async init(db: Db) {
+    const collection = db.collection(collectionName);
 
-  await collection.createIndex({ id: 1 }, { unique: true });
+    await collection.createIndex({ id: 1 }, { unique: true });
 
-  return collection;
-};
+    return collection;
+  },
+});
