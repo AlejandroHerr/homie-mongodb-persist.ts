@@ -1,5 +1,5 @@
 import defaultNodeAttributes from './defaultNodeAttributes';
-import Node from './Node';
+import Node, { NodeUniqueFields } from './Node';
 
 describe('Node', () => {
   it('should create an Node with default values', () => {
@@ -30,5 +30,17 @@ describe('Node', () => {
       ...defaultNodeAttributes,
       ...props.attributes,
     });
+  });
+
+  it('.getUniqueFields should return nodeUniqueFields', () => {
+    const props = {
+      deviceId: 'testDeviceId',
+      id: 'testId',
+    };
+    const node = new Node(props);
+
+    const nodeUniqueFields: NodeUniqueFields = node.getUniqueFields();
+
+    expect(nodeUniqueFields).toEqual({ deviceId: 'testDeviceId', id: 'testId' });
   });
 });

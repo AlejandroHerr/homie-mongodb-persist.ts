@@ -8,7 +8,7 @@ const LoggerProvider: Provider<Logger> = Object.freeze({
     pino({
       enabled: process.env.NODE_ENV !== 'testing',
     }),
-  ),
+  ).singleton(),
 });
 
 export default LoggerProvider;

@@ -1,7 +1,7 @@
 import defaultDeviceAttributes from './defaultDeviceAttributes';
-import Device from './Device';
+import Device, { DeviceUniqueFields } from './Device';
 
-describe('Device', () => {
+describe('models/Device', () => {
   it('should create an Device with default values', () => {
     const props = {
       id: 'testId',
@@ -26,5 +26,16 @@ describe('Device', () => {
       ...defaultDeviceAttributes,
       ...props.attributes,
     });
+  });
+
+  it('.getUniqueFields should return deviceUniqueFields', () => {
+    const props = {
+      id: 'testId',
+    };
+    const device = new Device(props);
+
+    const deviceUniqueFields: DeviceUniqueFields = device.getUniqueFields();
+
+    expect(deviceUniqueFields).toEqual({ id: 'testId' });
   });
 });

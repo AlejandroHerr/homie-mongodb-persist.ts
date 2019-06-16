@@ -2,6 +2,11 @@
 import HomieNode from './HomieNode';
 import NodeAttributes from './NodeAttributes';
 
+export interface NodeUniqueFields {
+  deviceId: string;
+  id: string;
+}
+
 export default class Node extends HomieNode {
   public _id?: string;
 
@@ -9,7 +14,7 @@ export default class Node extends HomieNode {
     _id,
     deviceId,
     id,
-    attributes = {},
+    attributes,
   }: {
     _id?: string;
     deviceId: string;
@@ -19,5 +24,12 @@ export default class Node extends HomieNode {
     super({ deviceId, id, attributes });
 
     this._id = _id;
+  }
+
+  public getUniqueFields(): NodeUniqueFields {
+    return {
+      deviceId: this.deviceId,
+      id: this.id,
+    };
   }
 }

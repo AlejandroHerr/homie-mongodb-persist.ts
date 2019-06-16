@@ -1,8 +1,6 @@
-import Node from './Node';
+import Node, { NodeUniqueFields } from './Node';
+import nodeFactory from './nodeFactory';
 
 export default Node;
 
-export interface NodeIdFields {
-  deviceId: string;
-  id: string;
-}
+export { NodeUniqueFields, nodeFactory };

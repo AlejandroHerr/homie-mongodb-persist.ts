@@ -2,6 +2,11 @@
 import HomieProperty from './HomieProperty';
 import PropertyAttributes from './PropertyAttributes';
 
+export interface PropertyUniqueFields {
+  deviceId: string;
+  nodeId: string;
+  id: string;
+}
 export default class Property extends HomieProperty {
   public _id?: string;
 
@@ -10,8 +15,8 @@ export default class Property extends HomieProperty {
     deviceId,
     nodeId,
     id,
-    attributes = {},
-    value = '',
+    attributes,
+    value,
   }: {
     _id?: string;
     deviceId: string;
@@ -23,5 +28,13 @@ export default class Property extends HomieProperty {
     super({ deviceId, nodeId, id, attributes, value });
 
     this._id = _id;
+  }
+
+  public getUniqueFields(): PropertyUniqueFields {
+    return {
+      deviceId: this.deviceId,
+      nodeId: this.nodeId,
+      id: this.id,
+    };
   }
 }

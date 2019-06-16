@@ -3,9 +3,10 @@ import { Collection } from 'mongodb';
 import Application from '../Application';
 import Node from '../models/Node';
 import ConfigProvider from '../providers/ConfigProvider';
-import LoggerProvider from '../providers/LoggerProvier';
+import LoggerProvider from '../providers/LoggerProvider';
 import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
-import MongoDbCollectionsProvider from '../providers/MongoDbCollectionsProvider';
+import NodeCollectionProvider from '../providers/NodeCollectionProvider';
+import NodeFactoryProvider from '../providers/NodeFactoryProvider';
 import createApplicationStore from '../utils/createApplicationStore';
 
 import NodeService from './NodeService';
@@ -23,10 +24,16 @@ const setup = () => {
   };
 };
 
-describe('NodeService', () => {
+describe('services/NodeService', () => {
   beforeAll(async () => {
     const application = await Application.createApplication()
-      .register(ConfigProvider, LoggerProvider, MongoDbClientServiceProvider, MongoDbCollectionsProvider)
+      .register(
+        ConfigProvider,
+        LoggerProvider,
+        MongoDbClientServiceProvider,
+        NodeCollectionProvider,
+        NodeFactoryProvider,
+      )
       .boot();
 
     applicationStore.setApplication(application);
