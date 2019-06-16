@@ -30,9 +30,9 @@ jobs:
       - run:
           name: build
           command: 'yarn build'
-      - persist_to_workspace:
-          root: .
-          paths: dist
+      # - persist_to_workspace:
+      #     root: .
+      #     paths: dist
   test:
     working_directory: *working_directory
     docker:
