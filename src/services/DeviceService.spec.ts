@@ -1,32 +1,32 @@
 import { Collection } from 'mongodb';
 
-import Application from '../Application';
 import Device from '../models/Device';
 import ConfigProvider from '../providers/ConfigProvider';
 import DeviceCollectionProvider from '../providers/DeviceCollectionProvider';
 import DeviceFactoryProvider from '../providers/DeviceFactoryProvider';
 import LoggerProvider from '../providers/LoggerProvider';
 import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
-import createApplicationStore from '../utils/createApplicationStore';
+import createAppContainerStore from '../utils/createAppContainerStore';
 
 import DeviceService from './DeviceService';
 
-const applicationStore = createApplicationStore();
+const appContainerStore = createAppContainerStore();
 
 const setup = () => {
-  const application = applicationStore.getApplication();
+  const appContainer = appContainerStore.getAppContainer();
 
-  const deviceService = new DeviceService(application.container.cradle);
+  const deviceService = appContainer.build(DeviceService);
 
   return {
-    mongoDeviceCollection: application.resolve<Collection>('mongoDeviceCollection'),
+    mongoDeviceCollection: appContainer.resolve<Collection>('mongoDeviceCollection'),
     deviceService,
   };
 };
 
 describe('srvices/DeviceService', () => {
   beforeAll(async () => {
-    const application = await Application.createApplication()
+    await appContainerStore
+      .getAppContainer()
       .register(
         ConfigProvider,
         LoggerProvider,
@@ -35,17 +35,15 @@ describe('srvices/DeviceService', () => {
         DeviceFactoryProvider,
       )
       .boot();
-
-    applicationStore.setApplication(application);
   });
 
   afterAll(async () => {
-    const application = applicationStore.getApplication();
-    const mongoDeviceCollection = application.resolve<Collection>('mongoDeviceCollection');
+    const appContainer = appContainerStore.getAppContainer();
+    const mongoDeviceCollection = appContainer.resolve<Collection>('mongoDeviceCollection');
 
     await mongoDeviceCollection.drop();
 
-    await application.dispose();
+    await appContainer.dispose();
   });
 
   describe('findOneById', () => {

@@ -1,6 +1,6 @@
 import { asValue } from 'awilix';
 
-import { Provider } from '../Application';
+import { Provider } from '../libs/Container';
 import propertyFactory from '../models/Property/propertyFactory';
 
 const PropertyFactoryProvider: Provider<typeof propertyFactory> = Object.freeze({

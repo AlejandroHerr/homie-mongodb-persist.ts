@@ -1,32 +1,32 @@
 import { Collection } from 'mongodb';
 
-import Application from '../Application';
 import Node from '../models/Node';
 import ConfigProvider from '../providers/ConfigProvider';
 import LoggerProvider from '../providers/LoggerProvider';
 import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
 import NodeCollectionProvider from '../providers/NodeCollectionProvider';
 import NodeFactoryProvider from '../providers/NodeFactoryProvider';
-import createApplicationStore from '../utils/createApplicationStore';
+import createAppContainerStore from '../utils/createAppContainerStore';
 
 import NodeService from './NodeService';
 
-const applicationStore = createApplicationStore();
+const appContainerStore = createAppContainerStore();
 
 const setup = () => {
-  const application = applicationStore.getApplication();
+  const appContainer = appContainerStore.getAppContainer();
 
-  const nodeService = new NodeService(application.container.cradle);
+  const nodeService = appContainer.build(NodeService);
 
   return {
-    mongoNodeCollection: application.resolve<Collection>('mongoNodeCollection'),
+    mongoNodeCollection: appContainer.resolve<Collection>('mongoNodeCollection'),
     nodeService,
   };
 };
 
 describe('services/NodeService', () => {
   beforeAll(async () => {
-    const application = await Application.createApplication()
+    await appContainerStore
+      .getAppContainer()
       .register(
         ConfigProvider,
         LoggerProvider,
@@ -35,17 +35,15 @@ describe('services/NodeService', () => {
         NodeFactoryProvider,
       )
       .boot();
-
-    applicationStore.setApplication(application);
   });
 
   afterAll(async () => {
-    const application = applicationStore.getApplication();
-    const mongoNodeCollection = application.resolve<Collection>('mongoNodeCollection');
+    const appContainer = appContainerStore.getAppContainer();
+    const mongoNodeCollection = appContainer.resolve<Collection>('mongoNodeCollection');
 
     await mongoNodeCollection.drop();
 
-    await application.dispose();
+    await appContainer.dispose();
   });
 
   describe('findOneById', () => {

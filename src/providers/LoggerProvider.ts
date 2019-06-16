@@ -1,6 +1,7 @@
 import { asFunction } from 'awilix';
 import pino, { Logger } from 'pino';
-import { Provider } from '../Application';
+
+import { Provider } from '../libs/Container';
 
 const LoggerProvider: Provider<Logger> = Object.freeze({
   name: 'logger',

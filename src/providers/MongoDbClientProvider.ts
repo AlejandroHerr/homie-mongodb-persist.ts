@@ -2,12 +2,12 @@ import { asFunction } from 'awilix';
 import { MongoClient, Db } from 'mongodb';
 import { Logger } from 'pino';
 
-import { AsyncProvider } from '../Application';
 import { Config } from '../config';
+import { BootableProvider } from '../libs/Container';
 
-const MongoDbClientServiceProvider: AsyncProvider<Db> = Object.freeze({
+const MongoDbClientServiceProvider: BootableProvider<Db> = Object.freeze({
   name: 'mongoDbClient',
-  async asyncResolver({ config: { mongodb }, logger }: { config: Config; logger: Logger }) {
+  async bootableResolver({ config: { mongodb }, logger }: { config: Config; logger: Logger }) {
     const mongoUri = `mongodb://${mongodb.host}:${mongodb.port}/${mongodb.dbName}`;
 
     const client = new MongoClient(mongoUri, {

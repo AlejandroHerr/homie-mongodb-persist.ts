@@ -1,4 +1,4 @@
-import Application from './Application';
+import { appContainerFactory } from './libs/AppContainer';
 import ConfigProvider from './providers/ConfigProvider';
 import DeviceCollectionProvider from './providers/DeviceCollectionProvider';
 import DeviceFactoryProvider from './providers/DeviceFactoryProvider';
@@ -11,19 +11,19 @@ import NodeFactoryProvider from './providers/NodeFactoryProvider';
 import PropertyCollectionProvider from './providers/PropertyCollectionProvider';
 import PropertyFactoryProvider from './providers/PropertyFactoryProvider';
 
-Application.createApplication()
+appContainerFactory()
   .register(
     ConfigProvider,
+    DeviceFactoryProvider,
     LoggerProvider,
-    MQTTClientProvider,
     MQTTTopicRouterProvider,
+    NodeFactoryProvider,
+    PropertyFactoryProvider,
     MongoDbClientServiceProvider,
+    MQTTClientProvider,
     DeviceCollectionProvider,
     NodeCollectionProvider,
     PropertyCollectionProvider,
-    DeviceFactoryProvider,
-    NodeFactoryProvider,
-    PropertyFactoryProvider,
   )
   .boot()
   .catch(error => {
