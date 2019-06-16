@@ -1,32 +1,32 @@
 import { Collection } from 'mongodb';
 
-import Application from '../Application';
 import Property from '../models/Property';
 import ConfigProvider from '../providers/ConfigProvider';
 import LoggerProvider from '../providers/LoggerProvider';
 import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
 import PropertyCollectionProvider from '../providers/PropertyCollectionProvider';
 import PropertyFactoryProvider from '../providers/PropertyFactoryProvider';
-import createApplicationStore from '../utils/createApplicationStore';
+import createAppContainerStore from '../utils/createAppContainerStore';
 
 import PropertyService from './PropertyService';
 
-const applicationStore = createApplicationStore();
+const appContainerStore = createAppContainerStore();
 
 const setup = () => {
-  const application = applicationStore.getApplication();
+  const appContainer = appContainerStore.getAppContainer();
 
-  const propertyService = new PropertyService(application.container.cradle);
+  const propertyService = appContainer.build(PropertyService);
 
   return {
-    mongoPropertyCollection: application.resolve<Collection>('mongoPropertyCollection'),
+    mongoPropertyCollection: appContainer.resolve<Collection>('mongoPropertyCollection'),
     propertyService,
   };
 };
 
 describe('services/PropertyService', () => {
   beforeAll(async () => {
-    const application = await Application.createApplication()
+    await appContainerStore
+      .getAppContainer()
       .register(
         ConfigProvider,
         LoggerProvider,
@@ -35,17 +35,15 @@ describe('services/PropertyService', () => {
         PropertyFactoryProvider,
       )
       .boot();
-
-    applicationStore.setApplication(application);
   });
 
   afterAll(async () => {
-    const application = applicationStore.getApplication();
-    const mongoPropertyCollection = application.resolve<Collection>('mongoPropertyCollection');
+    const appContainer = appContainerStore.getAppContainer();
+    const mongoPropertyCollection = appContainer.resolve<Collection>('mongoPropertyCollection');
 
     await mongoPropertyCollection.drop();
 
-    await application.dispose();
+    await appContainer.dispose();
   });
 
   describe('findOneById', () => {

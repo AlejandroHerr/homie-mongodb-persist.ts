@@ -1,10 +1,15 @@
 import { AsyncClient } from 'async-mqtt';
-import Application from '../../Application';
+
 import ConfigProvider from '../../providers/ConfigProvider';
 import LoggerProvider from '../../providers/LoggerProvider';
 import MQTTClientProvider from '../../providers/MQTTClientProvider';
-import MQTTTopicRouter from './MQTTTopicRouter';
+import createAppContainerStore from '../../utils/createAppContainerStore';
+
 import mqttPattern from '../mqttPattern';
+
+import MQTTTopicRouter from './MQTTTopicRouter';
+
+const appContainerStore = createAppContainerStore();
 
 const BASE_TOPIC = '/libs/MQTTTopicRouter';
 
@@ -27,23 +32,25 @@ const publishAndWaitForMessage = async (mqttClient: AsyncClient, topic: string, 
   return waitForMQTTMessagePromise;
 };
 
-const app = Application.createApplication();
-
 const setup = () => {
-  const mqttTopicRouter = new MQTTTopicRouter(app.container.cradle);
+  const appContainer = appContainerStore.getAppContainer();
+  const mqttTopicRouter = appContainer.build(MQTTTopicRouter);
 
   return {
     mqttTopicRouter,
-    mqttClient: app.container.resolve<AsyncClient>('mqttClient'),
+    mqttClient: appContainer.resolve<AsyncClient>('mqttClient'),
   };
 };
 
 describe('libs/MQTTTopicRouter', () => {
   beforeAll(async () => {
-    await app.register(ConfigProvider, LoggerProvider, MQTTClientProvider).boot();
+    await appContainerStore
+      .getAppContainer()
+      .register(ConfigProvider, LoggerProvider, MQTTClientProvider)
+      .boot();
   });
   afterAll(async () => {
-    await app.dispose();
+    await appContainerStore.getAppContainer().dispose();
   });
 
   it('.subscribe should subscribe the router to handle the messages', async () => {

@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Resolver as AwilixResolver } from 'awilix';
 
 export type Resolver<T = any> = AwilixResolver<T>;
 
-export type BootableResolver<T = any> = (args: any) => Promise<Resolver<T>>;
+export type BootableResolver<T = any> = (craddle: any) => Promise<Resolver<T>>;
 
 export interface Provider<T = any> {
   name: string | symbol;
