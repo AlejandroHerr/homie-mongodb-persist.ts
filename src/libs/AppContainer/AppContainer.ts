@@ -1,5 +1,7 @@
 import { asFunction, AwilixContainer, BuildResolverOptions, ClassOrFunctionReturning, ResolveOptions } from 'awilix';
 
+import promisedReduce from '../../utils/promisedReduce';
+
 import Container, { Provider, BootableProvider, Resolver } from '../Container';
 
 const isBootableProvider = (provider: Provider | BootableProvider): provider is BootableProvider =>
@@ -45,13 +47,14 @@ export default class AppContainer implements Container {
       return this;
     }
 
-    await Promise.all(
-      this.bootableProviders.map(({ name, bootableResolver }) =>
+    await promisedReduce<void, BootableProvider>(
+      this.bootableProviders,
+      (_, { name, bootableResolver }) =>
         this.awilixContainer
           .build(asFunction(bootableResolver))
           .then(resolver => ({ name, resolver }))
           .then(provider => this.registerProvider(provider)),
-      ),
+      undefined,
     );
 
     this.booted = true;
