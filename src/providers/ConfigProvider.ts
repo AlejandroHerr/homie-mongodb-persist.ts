@@ -1,7 +1,7 @@
 import { asValue } from 'awilix';
 
-import { Provider } from '../Application';
 import config, { Config } from '../config';
+import { Provider } from '../libs/Container';
 
 const ConfigProvider: Provider<Config> = Object.freeze({ name: 'config', resolver: asValue(config) });
 

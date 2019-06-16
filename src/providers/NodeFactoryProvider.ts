@@ -1,6 +1,6 @@
 import { asValue } from 'awilix';
 
-import { Provider } from '../Application';
+import { Provider } from '../libs/Container';
 import nodeFactory from '../models/Node/nodeFactory';
 
 const NodeFactoryProvider: Provider<typeof nodeFactory> = Object.freeze({

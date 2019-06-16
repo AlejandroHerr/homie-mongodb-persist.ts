@@ -1,6 +1,6 @@
 import { asClass } from 'awilix';
 
-import { Provider } from '../Application';
+import { Provider } from '../libs/Container';
 import MQTTTopicRouter from '../libs/MQTTTopicRouter/MQTTTopicRouter';
 
 const MQTTTopicRouterProvider: Provider<MQTTTopicRouter> = Object.freeze({
