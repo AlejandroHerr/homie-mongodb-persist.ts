@@ -6,7 +6,10 @@ describe('lib/mqttPatern', () => {
   describe('fill', () => {
     it('should fill only provided values', () => {
       expect(mqttPattern.fill('+name/#property', { name: 'test' })).toBe('test/#property');
-      expect(originalMqttPattern.fill('+name/#property', { name: 'test' })).toBe('test');
+      expect(mqttPattern.fill('+name/#property', { name: 'test', property: 'testProp' })).toBe('test/testProp');
+      expect(mqttPattern.fill('+name/#property', { name: 'test', property: ['testProp0', 'testProp1'] })).toBe(
+        'test/testProp0/testProp1',
+      );
     });
   });
   describe('exec', () => {
