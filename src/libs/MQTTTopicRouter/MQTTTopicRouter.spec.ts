@@ -8,29 +8,11 @@ import createAppContainerStore from '../../utils/createAppContainerStore';
 import mqttPattern from '../mqttPattern';
 
 import MQTTTopicRouter from './MQTTTopicRouter';
+import publishAndWaitForMessage from '../../utils/publishAndWaitForMessage';
 
 const appContainerStore = createAppContainerStore();
 
 const BASE_TOPIC = '/libs/MQTTTopicRouter';
-
-const waitForMQTTMessage = async (mqttClient: AsyncClient) => {
-  await mqttClient.subscribe('#');
-  return new Promise(resolve =>
-    mqttClient.once('message', async () => {
-      await mqttClient.unsubscribe('#');
-
-      resolve();
-    }),
-  );
-};
-
-const publishAndWaitForMessage = async (mqttClient: AsyncClient, topic: string, value: string) => {
-  const waitForMQTTMessagePromise = waitForMQTTMessage(mqttClient);
-
-  await mqttClient.publish(topic, value);
-
-  return waitForMQTTMessagePromise;
-};
 
 const setup = () => {
   const appContainer = appContainerStore.getAppContainer();
@@ -49,6 +31,7 @@ describe('libs/MQTTTopicRouter', () => {
       .register(ConfigProvider, LoggerProvider, MQTTClientProvider)
       .boot();
   });
+
   afterAll(async () => {
     await appContainerStore.getAppContainer().dispose();
   });
