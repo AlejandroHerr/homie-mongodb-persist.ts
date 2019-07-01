@@ -1,13 +1,13 @@
 import { Packet } from 'mqtt';
 
-export type Match = Record<string, string | string[]>;
+import { MQTTPatternParams } from '../MQTTPattern';
 
 export interface TopicRoutePayload {
   topic: string;
   payload: Buffer;
   packet: Packet;
-  topicPattern: string;
-  match: Match;
+  topicRoute: string;
+  match: MQTTPatternParams;
 }
 
 export type TopicRouteHandler = (payload: TopicRoutePayload) => void;

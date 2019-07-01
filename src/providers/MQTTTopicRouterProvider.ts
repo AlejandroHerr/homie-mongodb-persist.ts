@@ -1,11 +1,11 @@
 import { asClass } from 'awilix';
 
 import { Provider } from '../libs/Container';
-import MQTTTopicRouter from '../libs/MQTTTopicRouter/MQTTTopicRouter';
+import MQTTTopicRouter, { DefaultMQTTRouter } from '../libs/MQTTTopicRouter';
 
 const MQTTTopicRouterProvider: Provider<MQTTTopicRouter> = Object.freeze({
   name: 'mqttTopicRouter',
-  resolver: asClass(MQTTTopicRouter),
+  resolver: asClass(DefaultMQTTRouter).singleton(),
 });
 
 export default MQTTTopicRouterProvider;

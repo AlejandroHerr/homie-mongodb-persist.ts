@@ -5,6 +5,7 @@ import DeviceFactoryProvider from './providers/DeviceFactoryProvider';
 import LoggerProvider from './providers/LoggerProvider';
 import MongoDbClientServiceProvider from './providers/MongoDbClientProvider';
 import MQTTClientProvider from './providers/MQTTClientProvider';
+import MQTTPatternFactoryProvider from './providers/MQTTPatternFactoryProvider';
 import MQTTTopicRouterProvider from './providers/MQTTTopicRouterProvider';
 import NodeCollectionProvider from './providers/NodeCollectionProvider';
 import NodeFactoryProvider from './providers/NodeFactoryProvider';
@@ -14,13 +15,14 @@ import PropertyFactoryProvider from './providers/PropertyFactoryProvider';
 appContainerFactory()
   .register(
     ConfigProvider,
-    DeviceFactoryProvider,
     LoggerProvider,
+    MQTTPatternFactoryProvider,
     MQTTTopicRouterProvider,
+    MQTTClientProvider,
+    DeviceFactoryProvider,
     NodeFactoryProvider,
     PropertyFactoryProvider,
     MongoDbClientServiceProvider,
-    MQTTClientProvider,
     DeviceCollectionProvider,
     NodeCollectionProvider,
     PropertyCollectionProvider,

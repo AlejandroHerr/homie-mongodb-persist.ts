@@ -1,10 +1,12 @@
-import MQTTPattern from 'mqtt-pattern';
+import mqttPattern from 'mqtt-pattern';
+
+import { MQTTPatternParams } from '../MQTTPattern';
 
 const SEPARATOR = '/';
 const SINGLE = '+';
 const ALL = '#';
 
-const fill = (pattern: string, params: Record<string, string | string[]>) => {
+export const fill = (pattern: string, params: MQTTPatternParams): string => {
   const patternSegments = pattern.split(SEPARATOR);
   const patternLength = patternSegments.length;
 
@@ -28,7 +30,4 @@ const fill = (pattern: string, params: Record<string, string | string[]>) => {
   return result.join(SEPARATOR);
 };
 
-export default {
-  ...MQTTPattern,
-  fill,
-};
+export const { clean, matches, extract, exec } = mqttPattern;
