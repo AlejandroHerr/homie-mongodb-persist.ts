@@ -6,7 +6,7 @@ import LoggerProvider from './providers/LoggerProvider';
 import MongoDbClientServiceProvider from './providers/MongoDbClientProvider';
 import MQTTClientProvider from './providers/MQTTClientProvider';
 import MQTTPatternFactoryProvider from './providers/MQTTPatternFactoryProvider';
-import MQTTTopicRouterProvider from './providers/MQTTTopicRouterProvider';
+import MQTTRouterProvider from './providers/MQTTRouterProvider';
 import NodeCollectionProvider from './providers/NodeCollectionProvider';
 import NodeFactoryProvider from './providers/NodeFactoryProvider';
 import PropertyCollectionProvider from './providers/PropertyCollectionProvider';
@@ -17,7 +17,7 @@ appContainerFactory()
     ConfigProvider,
     LoggerProvider,
     MQTTPatternFactoryProvider,
-    MQTTTopicRouterProvider,
+    MQTTRouterProvider,
     MQTTClientProvider,
     DeviceFactoryProvider,
     NodeFactoryProvider,

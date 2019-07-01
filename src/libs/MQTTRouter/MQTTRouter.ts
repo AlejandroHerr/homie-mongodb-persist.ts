@@ -1,6 +1,6 @@
 import { TopicRouteHandler } from './types';
 
-export default interface MQTTTopicRouter {
+export default interface MQTTRouter {
   readonly routedTopics: string[];
 
   addTopicRoute(topic: string, handler: TopicRouteHandler): Promise<this>;

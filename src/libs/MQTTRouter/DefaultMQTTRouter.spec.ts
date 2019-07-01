@@ -9,15 +9,15 @@ import publishAndWaitForMessage from '../../utils/publishAndWaitForMessage';
 
 import { createDefaultMQTTPattern } from '../MQTTPattern';
 
-import DefaultMQTTTopicRouter from './DefaultMQTTRouter';
+import DefaultMQTTRouter from './DefaultMQTTRouter';
 
 const appContainerStore = createAppContainerStore();
 
-const BASE_TOPIC = '/libs/DefaultMQTTTopicRouter';
+const BASE_TOPIC = '/libs/DefaultMQTTRouter';
 
 const setup = () => {
   const appContainer = appContainerStore.getAppContainer();
-  const mqttTopicRouter = appContainer.build(DefaultMQTTTopicRouter);
+  const mqttTopicRouter = appContainer.build(DefaultMQTTRouter);
 
   return {
     mqttTopicRouter,
@@ -25,7 +25,7 @@ const setup = () => {
   };
 };
 
-describe('libs/MQTTTopicRouter/DefaultMQTTRouter', () => {
+describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
   beforeAll(async () => {
     await appContainerStore
       .getAppContainer()

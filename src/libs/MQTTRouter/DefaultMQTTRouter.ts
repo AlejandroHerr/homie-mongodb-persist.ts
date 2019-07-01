@@ -4,9 +4,9 @@ import { AsyncClient } from 'async-mqtt';
 import MQTTPattern, { CreateMQTTPattern } from '../MQTTPattern';
 
 import { TopicRouteHandler } from './types';
-import MQTTTopicRouter from './MQTTTopicRouter';
+import MQTTRouter from './MQTTRouter';
 
-export default class DefaultMQTTRouter implements MQTTTopicRouter {
+export default class DefaultMQTTRouter implements MQTTRouter {
   private createMQTTPattern: CreateMQTTPattern;
 
   private mqttClient: AsyncClient;

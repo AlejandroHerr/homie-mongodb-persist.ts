@@ -1,6 +1,6 @@
 import DefaultMQTTRouter from './DefaultMQTTRouter';
-import MQTTTopicRouter from './MQTTTopicRouter';
+import MQTTRouter from './MQTTRouter';
 import { TopicRoutePayload, TopicRouteHandler } from './types';
 
-export default MQTTTopicRouter;
+export default MQTTRouter;
 export { DefaultMQTTRouter, TopicRoutePayload, TopicRouteHandler };
