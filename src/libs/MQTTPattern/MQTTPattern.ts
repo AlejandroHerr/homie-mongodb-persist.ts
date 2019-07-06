@@ -1,14 +1,9 @@
 export type MQTTPatternParams = Record<string, string | string[]>;
 
 export default interface MQTTPattern {
-  readonly pattern: string;
-  readonly cleanPattern: string;
-
-  matches(topic: string): boolean;
-  extract(topic: string): MQTTPatternParams;
-  exec(topic: string): MQTTPatternParams | null;
-  fill(params: MQTTPatternParams): string;
-  fillPattern(params: MQTTPatternParams): MQTTPattern;
+  clean(pattern: string): string;
+  matches(pattern: string, topic: string): boolean;
+  extract(pattern: string, topic: string): MQTTPatternParams;
+  exec(pattern: string, topic: string): MQTTPatternParams | null;
+  fill(pattern: string, params: MQTTPatternParams): string;
 }
-
-export type CreateMQTTPattern = (topic: string) => MQTTPattern;

@@ -1,13 +1,13 @@
 import { Packet } from 'mqtt';
 import { AsyncClient } from 'async-mqtt';
 
-import MQTTPattern, { CreateMQTTPattern } from '../MQTTPattern';
+import MQTTPattern from '../MQTTPattern';
 
 import { TopicRouteHandler } from './types';
 import MQTTRouter from './MQTTRouter';
 
 export default class DefaultMQTTRouter implements MQTTRouter {
-  private createMQTTPattern: CreateMQTTPattern;
+  private mqttPattern: MQTTPattern;
 
   private mqttClient: AsyncClient;
 
@@ -15,35 +15,26 @@ export default class DefaultMQTTRouter implements MQTTRouter {
 
   private topicRouteHandlers: Map<string, TopicRouteHandler> = new Map();
 
-  private topicRoutePatterns: Map<string, MQTTPattern> = new Map();
-
-  public constructor({
-    createMQTTPattern,
-    mqttClient,
-  }: {
-    createMQTTPattern: CreateMQTTPattern;
-    mqttClient: AsyncClient;
-  }) {
-    this.createMQTTPattern = createMQTTPattern;
+  public constructor({ mqttClient, mqttPattern }: { mqttClient: AsyncClient; mqttPattern: MQTTPattern }) {
     this.mqttClient = mqttClient;
+    this.mqttPattern = mqttPattern;
   }
 
   private messageHandler(topic: string, payload: Buffer, packet: Packet) {
-    this.topicRoutePatterns.forEach((topicRoutePattern, topicRoute) => {
-      const match = topicRoutePattern.exec(topic);
-
-      if (match) {
-        const topicRouteHandler = this.topicRouteHandlers.get(topicRoute) as TopicRouteHandler;
+    this.routedTopics
+      .filter(pattern => this.mqttPattern.matches(pattern, topic))
+      .forEach(pattern => {
+        const match = this.mqttPattern.extract(pattern, topic);
+        const topicRouteHandler = this.topicRouteHandlers.get(pattern) as TopicRouteHandler;
 
         topicRouteHandler({
           topic,
           payload,
           packet,
-          topicRoute,
+          topicRoute: pattern,
           match,
         });
-      }
-    });
+      });
   }
 
   public get routedTopics() {
@@ -63,39 +54,32 @@ export default class DefaultMQTTRouter implements MQTTRouter {
       this.subscribe();
     }
 
-    const topicPattern = this.createMQTTPattern(topic);
-
-    this.topicRoutePatterns.set(topic, topicPattern);
     this.topicRouteHandlers.set(topic, handler);
 
-    await this.mqttClient.subscribe(topicPattern.cleanPattern);
+    await this.mqttClient.subscribe(this.mqttPattern.clean(topic));
 
     return this;
   }
 
   public async removeTopicRoute(topic: string) {
-    const topicPattern = this.topicRoutePatterns.get(topic);
-
-    if (!topicPattern) {
+    if (!this.hasTopicRoute(topic)) {
       return this;
     }
 
     this.topicRouteHandlers.delete(topic);
-    this.topicRoutePatterns.delete(topic);
 
-    await this.mqttClient.unsubscribe(topicPattern.cleanPattern);
+    await this.mqttClient.unsubscribe(this.mqttPattern.clean(topic));
 
     return this;
   }
 
   public async removeAllTopicRoutes() {
     await Promise.all(
-      Array.from(this.topicRoutePatterns.values()).map(topicPattern =>
-        this.mqttClient.unsubscribe(topicPattern.cleanPattern),
+      Array.from(this.topicRouteHandlers.keys()).map(topic =>
+        this.mqttClient.unsubscribe(this.mqttPattern.clean(topic)),
       ),
     );
 
-    this.topicRoutePatterns.clear();
     this.topicRouteHandlers.clear();
 
     return this;

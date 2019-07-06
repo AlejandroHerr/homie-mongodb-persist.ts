@@ -1,13 +1,6 @@
-import DefaultMQTTPattern, { createDefaultMQTTPattern } from './DefaultMQTTPattern';
-import HomieMQTTPattern, { createHomieMQTTPattern } from './HomieMQTTPattern';
-import MQTTPattern, { CreateMQTTPattern, MQTTPatternParams } from './MQTTPattern';
+import DefaultMQTTPattern from './DefaultMQTTPattern';
+import HomieMQTTPattern from './HomieMQTTPattern';
+import MQTTPattern, { MQTTPatternParams } from './MQTTPattern';
 
 export default MQTTPattern;
-export {
-  CreateMQTTPattern,
-  MQTTPatternParams,
-  DefaultMQTTPattern,
-  createDefaultMQTTPattern,
-  HomieMQTTPattern,
-  createHomieMQTTPattern,
-};
+export { MQTTPatternParams, DefaultMQTTPattern, HomieMQTTPattern };

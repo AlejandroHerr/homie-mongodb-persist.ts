@@ -7,7 +7,7 @@ import MQTTClientProvider from '../../providers/MQTTClientProvider';
 import createAppContainerStore from '../../utils/createAppContainerStore';
 import publishAndWaitForMessage from '../../utils/publishAndWaitForMessage';
 
-import { createDefaultMQTTPattern } from '../MQTTPattern';
+import { DefaultMQTTPattern } from '../MQTTPattern';
 
 import DefaultMQTTRouter from './DefaultMQTTRouter';
 
@@ -17,10 +17,10 @@ const BASE_TOPIC = '/libs/DefaultMQTTRouter';
 
 const setup = () => {
   const appContainer = appContainerStore.getAppContainer();
-  const mqttTopicRouter = appContainer.build(DefaultMQTTRouter);
+  const mqttRouter = appContainer.build(DefaultMQTTRouter);
 
   return {
-    mqttTopicRouter,
+    mqttRouter,
     mqttClient: appContainer.resolve<AsyncClient>('mqttClient'),
   };
 };
@@ -30,8 +30,8 @@ describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
     await appContainerStore
       .getAppContainer()
       .register(ConfigProvider, LoggerProvider, MQTTClientProvider, {
-        name: 'createMQTTPattern',
-        resolver: asValue(createDefaultMQTTPattern),
+        name: 'mqttPattern',
+        resolver: asValue(DefaultMQTTPattern),
       })
       .boot();
   });
@@ -42,7 +42,7 @@ describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
 
   describe('.addTopicRoute', () => {
     it(' should route topics', async () => {
-      const { mqttTopicRouter, mqttClient } = setup();
+      const { mqttRouter, mqttClient } = setup();
 
       const topicRoute0 = {
         topic: `${BASE_TOPIC}/addTopicRoute/0/+name/#args`,
@@ -54,8 +54,8 @@ describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
       };
 
       await Promise.all([
-        mqttTopicRouter.addTopicRoute(topicRoute0.topic, topicRoute0.handler),
-        mqttTopicRouter.addTopicRoute(topicRoute1.topic, topicRoute1.handler),
+        mqttRouter.addTopicRoute(topicRoute0.topic, topicRoute0.handler),
+        mqttRouter.addTopicRoute(topicRoute1.topic, topicRoute1.handler),
       ]);
 
       await publishAndWaitForMessage(mqttClient, `${BASE_TOPIC}/addTopicRoute/0/testName/arg0/arg1`, 'testValue');
@@ -76,16 +76,16 @@ describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
   });
 
   describe('.removeTopicRoute', () => {
-    it('should remeove the listener for the route', async () => {
-      const { mqttTopicRouter, mqttClient } = setup();
+    it('should remove the listener for the route', async () => {
+      const { mqttRouter, mqttClient } = setup();
 
       const topicRoute = {
         topic: `${BASE_TOPIC}/removeTopicRoute`,
         handler: jest.fn(),
       };
 
-      await mqttTopicRouter.addTopicRoute(topicRoute.topic, topicRoute.handler);
-      await mqttTopicRouter.removeTopicRoute(topicRoute.topic);
+      await mqttRouter.addTopicRoute(topicRoute.topic, topicRoute.handler);
+      await mqttRouter.removeTopicRoute(topicRoute.topic);
 
       await publishAndWaitForMessage(mqttClient, topicRoute.topic, 'testValue');
 
@@ -93,20 +93,20 @@ describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
     });
 
     it('should do nothing if topic is not routed the listener for the route', async () => {
-      const { mqttTopicRouter } = setup();
+      const { mqttRouter } = setup();
 
       const topicRoute = {
         topic: `${BASE_TOPIC}/removeTopicRoute`,
         handler: jest.fn(),
       };
 
-      await expect(mqttTopicRouter.removeTopicRoute(topicRoute.topic)).resolves.toBe(mqttTopicRouter);
+      await expect(mqttRouter.removeTopicRoute(topicRoute.topic)).resolves.toBe(mqttRouter);
     });
   });
 
   describe('.removeAllTopicRoutes', () => {
     it(' should remeove the listener for the route', async () => {
-      const { mqttTopicRouter, mqttClient } = setup();
+      const { mqttRouter, mqttClient } = setup();
 
       const topicRoutes = [
         {
@@ -120,11 +120,11 @@ describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
       ];
 
       await Promise.all([
-        mqttTopicRouter.addTopicRoute(topicRoutes[0].topic, topicRoutes[0].handler),
-        mqttTopicRouter.addTopicRoute(topicRoutes[1].topic, topicRoutes[1].handler),
+        mqttRouter.addTopicRoute(topicRoutes[0].topic, topicRoutes[0].handler),
+        mqttRouter.addTopicRoute(topicRoutes[1].topic, topicRoutes[1].handler),
       ]);
 
-      await mqttTopicRouter.removeAllTopicRoutes();
+      await mqttRouter.removeAllTopicRoutes();
 
       await publishAndWaitForMessage(mqttClient, topicRoutes[0].topic, 'testValue');
       await publishAndWaitForMessage(mqttClient, topicRoutes[1].topic, 'testValue');
@@ -136,32 +136,32 @@ describe('libs/MQTTRouter/DefaultMQTTRouter', () => {
 
   describe('.hasTopicRoute', () => {
     it('should return true if topic is routed', async () => {
-      const { mqttTopicRouter } = setup();
+      const { mqttRouter } = setup();
 
       const topicRoute = {
         topic: `${BASE_TOPIC}/subscribe`,
         handler: () => {},
       };
 
-      expect(mqttTopicRouter.hasTopicRoute(topicRoute.topic)).toBeFalsy();
+      expect(mqttRouter.hasTopicRoute(topicRoute.topic)).toBeFalsy();
 
-      await mqttTopicRouter.addTopicRoute(topicRoute.topic, topicRoute.handler);
+      await mqttRouter.addTopicRoute(topicRoute.topic, topicRoute.handler);
 
-      expect(mqttTopicRouter.hasTopicRoute(topicRoute.topic)).toBeTruthy();
+      expect(mqttRouter.hasTopicRoute(topicRoute.topic)).toBeTruthy();
     });
   });
 
   describe('.routedTopics', () => {
     it('should be a list  of all the routed topics', async () => {
-      const { mqttTopicRouter } = setup();
+      const { mqttRouter } = setup();
 
       await Promise.all([
-        mqttTopicRouter.addTopicRoute(`${BASE_TOPIC}/routedTopics0`, () => {}),
-        mqttTopicRouter.addTopicRoute(`${BASE_TOPIC}/routedTopics1`, () => {}),
-        mqttTopicRouter.addTopicRoute(`${BASE_TOPIC}/routedTopics2`, () => {}),
+        mqttRouter.addTopicRoute(`${BASE_TOPIC}/routedTopics0`, () => {}),
+        mqttRouter.addTopicRoute(`${BASE_TOPIC}/routedTopics1`, () => {}),
+        mqttRouter.addTopicRoute(`${BASE_TOPIC}/routedTopics2`, () => {}),
       ]);
 
-      expect(mqttTopicRouter.routedTopics).toEqual([
+      expect(mqttRouter.routedTopics).toEqual([
         `${BASE_TOPIC}/routedTopics0`,
         `${BASE_TOPIC}/routedTopics1`,
         `${BASE_TOPIC}/routedTopics2`,

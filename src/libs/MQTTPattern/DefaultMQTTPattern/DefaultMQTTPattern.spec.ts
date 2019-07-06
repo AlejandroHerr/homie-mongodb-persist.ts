@@ -3,48 +3,46 @@ import { clean } from './helpers';
 
 describe('lib/MQTTPattern/DefaultMQTTPattern/DefaultMQTTPattern', () => {
   it('has a cleanPattern property', () => {
-    expect(new DefaultMQTTPattern('hello/+param1/world/#param2').cleanPattern).toBe(
-      clean('hello/+param1/world/#param2'),
-    );
-    expect(new DefaultMQTTPattern('hello/+/world/#').cleanPattern).toBe(clean('hello/+/world/#'));
+    expect(DefaultMQTTPattern.clean('hello/+param1/world/#param2')).toBe(clean('hello/+param1/world/#param2'));
+    expect(DefaultMQTTPattern.clean('hello/+/world/#')).toBe(clean('hello/+/world/#'));
   });
 
   describe('.matches', () => {
     it('checks if topic matches the pattern', () => {
-      expect(new DefaultMQTTPattern('foo/bar/baz').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('foo/bar/baz').matches('baz/bar/foo')).toBeFalsy();
-      expect(new DefaultMQTTPattern('#').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('foo/#').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('foo/bar/#').matches('foo/bar')).toBeTruthy();
-      expect(new DefaultMQTTPattern('#/bar/baz').matches('foo/bar/baz')).toBeFalsy();
-      expect(new DefaultMQTTPattern('+/bar/baz').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('foo/bar/+').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('foo/+/baz').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('foo/+/#').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('foo/+something/#else').matches('foo/bar/baz')).toBeTruthy();
-      expect(new DefaultMQTTPattern('/foo/bar').matches('/foo/bar')).toBeTruthy();
-      expect(new DefaultMQTTPattern('/foo/bar').matches('/bar/foo')).toBeFalsy();
-      expect(new DefaultMQTTPattern('/foo/bar').matches('/foo/bar/baz')).toBeFalsy();
-      expect(new DefaultMQTTPattern('/foo/bar/baz').matches('/foo/bar')).toBeFalsy();
+      expect(DefaultMQTTPattern.matches('foo/bar/baz', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('foo/bar/baz', 'baz/bar/foo')).toBeFalsy();
+      expect(DefaultMQTTPattern.matches('#', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('foo/#', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('foo/bar/#', 'foo/bar')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('#/bar/baz', 'foo/bar/baz')).toBeFalsy();
+      expect(DefaultMQTTPattern.matches('+/bar/baz', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('foo/bar/+', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('foo/+/baz', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('foo/+/#', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('foo/+something/#else', 'foo/bar/baz')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('/foo/bar', '/foo/bar')).toBeTruthy();
+      expect(DefaultMQTTPattern.matches('/foo/bar', '/bar/foo')).toBeFalsy();
+      expect(DefaultMQTTPattern.matches('/foo/bar', '/foo/bar/baz')).toBeFalsy();
+      expect(DefaultMQTTPattern.matches('/foo/bar/baz', '/foo/bar')).toBeFalsy();
     });
   });
 
   describe('.extract', () => {
     it('extracts the params from a topic', () => {
-      expect(new DefaultMQTTPattern('foo/bar/baz').extract('foo/bar/baz')).toEqual({});
-      expect(new DefaultMQTTPattern('foo/+/#').extract('foo/bar/baz')).toEqual({});
-      expect(new DefaultMQTTPattern('foo/#something').extract('foo/bar/baz')).toEqual({
+      expect(DefaultMQTTPattern.extract('foo/bar/baz', 'foo/bar/baz')).toEqual({});
+      expect(DefaultMQTTPattern.extract('foo/+/#', 'foo/bar/baz')).toEqual({});
+      expect(DefaultMQTTPattern.extract('foo/#something', 'foo/bar/baz')).toEqual({
         something: ['bar', 'baz'],
       });
-      expect(new DefaultMQTTPattern('foo/+hello/+world').extract('foo/bar/baz')).toEqual({
+      expect(DefaultMQTTPattern.extract('foo/+hello/+world', 'foo/bar/baz')).toEqual({
         hello: 'bar',
         world: 'baz',
       });
-      expect(new DefaultMQTTPattern('foo/+hello/#world').extract('foo/bar/baz')).toEqual({
+      expect(DefaultMQTTPattern.extract('foo/+hello/#world', 'foo/bar/baz')).toEqual({
         hello: 'bar',
         world: ['baz'],
       });
-      expect(new DefaultMQTTPattern('+hello/+world/#wow').extract('foo/bar/baz/fizz')).toEqual({
+      expect(DefaultMQTTPattern.extract('+hello/+world/#wow', 'foo/bar/baz/fizz')).toEqual({
         hello: 'foo',
         world: 'bar',
         wow: ['baz', 'fizz'],
@@ -54,41 +52,22 @@ describe('lib/MQTTPattern/DefaultMQTTPattern/DefaultMQTTPattern', () => {
 
   describe('.exec', () => {
     it('extracts the params if the  topic matches', () => {
-      expect(new DefaultMQTTPattern('foo/bar/baz').exec('foo/bar/baz')).toEqual({});
-      expect(new DefaultMQTTPattern('+hello/+world/#wow').exec('foo/bar/baz/fizz')).toEqual({
+      expect(DefaultMQTTPattern.exec('foo/bar/baz', 'foo/bar/baz')).toEqual({});
+      expect(DefaultMQTTPattern.exec('+hello/+world/#wow', 'foo/bar/baz/fizz')).toEqual({
         hello: 'foo',
         world: 'bar',
         wow: ['baz', 'fizz'],
       });
-      expect(new DefaultMQTTPattern('hello/+world/#wow').exec('foo/bar/baz/fizz')).toBeNull();
+      expect(DefaultMQTTPattern.exec('hello/+world/#wow', 'foo/bar/baz/fizz')).toBeNull();
     });
   });
 
   describe('.fill', () => {
     it('fills the pattern with provided params', () => {
-      expect(new DefaultMQTTPattern('+name/+property').fill({ name: 'test' })).toBe('test/+property');
-      expect(new DefaultMQTTPattern('+name/#property').fill({ name: 'test' })).toBe('test/#property');
-      expect(new DefaultMQTTPattern('+name/#property').fill({ property: 'test' })).toBe('+name/test');
-      expect(new DefaultMQTTPattern('+name/#property').fill({ property: ['test0', 'test1'] })).toBe(
-        '+name/test0/test1',
-      );
-    });
-  });
-
-  describe('.fillPattern', () => {
-    it('fills and return a new pattern', () => {
-      expect(new DefaultMQTTPattern('+name/+property').fillPattern({ name: 'test' })).toEqual(
-        new DefaultMQTTPattern('test/+property'),
-      );
-      expect(new DefaultMQTTPattern('+name/#property').fillPattern({ name: 'test' })).toEqual(
-        new DefaultMQTTPattern('test/#property'),
-      );
-      expect(new DefaultMQTTPattern('+name/#property').fillPattern({ property: 'test' })).toEqual(
-        new DefaultMQTTPattern('+name/test'),
-      );
-      expect(new DefaultMQTTPattern('+name/#property').fillPattern({ property: ['test0', 'test1'] })).toEqual(
-        new DefaultMQTTPattern('+name/test0/test1'),
-      );
+      expect(DefaultMQTTPattern.fill('+name/+property', { name: 'test' })).toBe('test/+property');
+      expect(DefaultMQTTPattern.fill('+name/#property', { name: 'test' })).toBe('test/#property');
+      expect(DefaultMQTTPattern.fill('+name/#property', { property: 'test' })).toBe('+name/test');
+      expect(DefaultMQTTPattern.fill('+name/#property', { property: ['test0', 'test1'] })).toBe('+name/test0/test1');
     });
   });
 });

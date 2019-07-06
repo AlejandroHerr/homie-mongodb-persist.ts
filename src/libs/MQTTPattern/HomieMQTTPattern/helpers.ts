@@ -1,7 +1,9 @@
 import { MQTTPatternParams } from '../MQTTPattern';
 
+const ATTRIBUTE_PREFIX = '$';
 const SEPARATOR = '/';
 const SINGLE = '+';
+const SINGLE_ATTRIBUTE = '$+';
 const ALL = '#';
 
 export const clean = (pattern: string) =>
@@ -40,7 +42,7 @@ export const fill = (pattern: string, params: MQTTPatternParams) =>
       }
 
       if (currentPattern[0] === SINGLE) {
-        const patternParam = currentPattern.slice(1);
+        const patternParam = currentPattern.slice(SINGLE.length);
         const paramValue = params[patternParam] as string;
 
         result.push(paramValue || currentPattern);
@@ -48,12 +50,11 @@ export const fill = (pattern: string, params: MQTTPatternParams) =>
         return result;
       }
 
-      if (currentPattern.includes(SINGLE)) {
-        const [patternPrefix, patternParam] = currentPattern.split(SINGLE);
-
+      if (currentPattern.startsWith(SINGLE_ATTRIBUTE)) {
+        const patternParam = currentPattern.slice(SINGLE_ATTRIBUTE.length);
         const paramValue = params[patternParam] as string;
 
-        result.push((paramValue && `${patternPrefix}${paramValue}`) || currentPattern);
+        result.push((paramValue && `$${paramValue}`) || currentPattern);
 
         return result;
       }
@@ -82,17 +83,15 @@ export const matches = (pattern: string, topic: string): boolean => {
       return index === patterns.length - 1;
     }
 
-    if (currentPattern[0] !== SINGLE && currentPattern.includes(SINGLE)) {
-      const [patternPrefix] = currentPattern.split(SINGLE);
-
-      return currentTopic.startsWith(patternPrefix) ? result : false;
+    if (currentPattern[0] === SINGLE) {
+      return !currentTopic || currentTopic[0] !== ATTRIBUTE_PREFIX ? result : false;
     }
 
-    if (currentPattern[0] !== SINGLE && currentPattern !== currentTopic) {
-      return false;
+    if (currentPattern.startsWith(SINGLE_ATTRIBUTE)) {
+      return currentTopic && currentTopic[0] === ATTRIBUTE_PREFIX ? result : false;
     }
 
-    return result;
+    return currentPattern === currentTopic ? result : false;
   }, undefined);
 
   if (match === undefined) {
@@ -130,15 +129,17 @@ export const extract = (pattern: string, topic: string): MQTTPatternParams => {
         return updateState(state, { [currentPattern.slice(1)]: topicSegments[index] }, false);
       }
 
-      if (currentPattern.includes(SINGLE)) {
-        const [patternPrefix, patternName] = currentPattern.split(SINGLE);
+      if (currentPattern.startsWith(SINGLE_ATTRIBUTE)) {
         const currentTopic = topicSegments[index];
-        if (!currentTopic.startsWith(patternPrefix)) {
+
+        if (!currentTopic.startsWith(ATTRIBUTE_PREFIX)) {
           return state;
         }
-        const [, paramValue] = currentTopic.split(patternPrefix);
 
-        return updateState(state, { [patternName]: paramValue }, false);
+        const paramName = currentPattern.slice(SINGLE_ATTRIBUTE.length);
+        const paramValue = currentTopic.slice(ATTRIBUTE_PREFIX.length);
+
+        return updateState(state, { [paramName]: paramValue }, false);
       }
 
       return state;
