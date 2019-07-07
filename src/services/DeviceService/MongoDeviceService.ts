@@ -1,18 +1,20 @@
 import { Collection } from 'mongodb';
 
-import { DeviceUniqueFields, deviceFactory } from '../models/Device';
+import { DeviceUniqueFields, deviceFactory } from '../../models/Device';
 
-interface DeviceServiceConstructor {
+import DeviceService from './DeviceService';
+
+interface MongoDeviceServiceConstructor {
   deviceFactory: typeof deviceFactory;
   mongoDeviceCollection: Collection;
 }
 
-export default class DeviceService {
+export default class MongoDeviceService implements DeviceService {
   private collection: Collection;
 
   private modelFactory: typeof deviceFactory;
 
-  public constructor({ deviceFactory: modelFactory, mongoDeviceCollection }: DeviceServiceConstructor) {
+  public constructor({ deviceFactory: modelFactory, mongoDeviceCollection }: MongoDeviceServiceConstructor) {
     this.collection = mongoDeviceCollection;
     this.modelFactory = modelFactory;
   }

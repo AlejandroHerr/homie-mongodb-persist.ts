@@ -1,21 +1,21 @@
 import { Collection } from 'mongodb';
 
-import Device from '../models/Device';
-import ConfigProvider from '../providers/ConfigProvider';
-import DeviceCollectionProvider from '../providers/DeviceCollectionProvider';
-import DeviceFactoryProvider from '../providers/DeviceFactoryProvider';
-import LoggerProvider from '../providers/LoggerProvider';
-import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
-import createAppContainerStore from '../utils/createAppContainerStore';
+import Device from '../../models/Device';
+import ConfigProvider from '../../providers/ConfigProvider';
+import DeviceCollectionProvider from '../../providers/DeviceCollectionProvider';
+import DeviceFactoryProvider from '../../providers/DeviceFactoryProvider';
+import LoggerProvider from '../../providers/LoggerProvider';
+import MongoDbClientServiceProvider from '../../providers/MongoDbClientProvider';
+import createAppContainerStore from '../../utils/createAppContainerStore';
 
-import DeviceService from './DeviceService';
+import MongoDeviceService from './MongoDeviceService';
 
 const appContainerStore = createAppContainerStore();
 
 const setup = () => {
   const appContainer = appContainerStore.getAppContainer();
 
-  const deviceService = appContainer.build(DeviceService);
+  const deviceService = appContainer.build(MongoDeviceService);
 
   return {
     mongoDeviceCollection: appContainer.resolve<Collection>('mongoDeviceCollection'),
@@ -23,7 +23,7 @@ const setup = () => {
   };
 };
 
-describe('srvices/DeviceService', () => {
+describe('services/DeviceService/MongoDeviceService', () => {
   beforeAll(async () => {
     await appContainerStore
       .getAppContainer()

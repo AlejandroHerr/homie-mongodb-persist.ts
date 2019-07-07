@@ -1,18 +1,20 @@
 import { Collection } from 'mongodb';
 
-import { NodeUniqueFields, nodeFactory } from '../models/Node';
+import { NodeUniqueFields, nodeFactory } from '../../models/Node';
 
-interface NodeServiceConstructor {
+import NodeService from './NodeService';
+
+interface MongoNodeServiceConstructor {
   mongoNodeCollection: Collection;
   nodeFactory: typeof nodeFactory;
 }
 
-export default class NodeService {
+export default class MongoNodeService implements NodeService {
   private collection: Collection;
 
   private modelFactory: typeof nodeFactory;
 
-  public constructor({ mongoNodeCollection, nodeFactory: modelFactory }: NodeServiceConstructor) {
+  public constructor({ mongoNodeCollection, nodeFactory: modelFactory }: MongoNodeServiceConstructor) {
     this.collection = mongoNodeCollection;
     this.modelFactory = modelFactory;
   }

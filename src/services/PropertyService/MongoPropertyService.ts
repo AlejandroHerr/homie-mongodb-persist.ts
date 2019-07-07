@@ -1,18 +1,20 @@
 import { Collection } from 'mongodb';
 
-import { PropertyUniqueFields, propertyFactory } from '../models/Property';
+import { PropertyUniqueFields, propertyFactory } from '../../models/Property';
 
-interface PropertyServiceConstructor {
+import PropertyService from './PropertyService';
+
+interface MongoPropertyServiceConstructor {
   mongoPropertyCollection: Collection;
   propertyFactory: typeof propertyFactory;
 }
 
-export default class PropertyService {
+export default class MongoPropertyService implements PropertyService {
   private collection: Collection;
 
   private modelFactory: typeof propertyFactory;
 
-  public constructor({ mongoPropertyCollection, propertyFactory: modelFactory }: PropertyServiceConstructor) {
+  public constructor({ mongoPropertyCollection, propertyFactory: modelFactory }: MongoPropertyServiceConstructor) {
     this.collection = mongoPropertyCollection;
     this.modelFactory = modelFactory;
   }

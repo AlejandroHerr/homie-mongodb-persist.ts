@@ -1,21 +1,21 @@
 import { Collection } from 'mongodb';
 
-import Node from '../models/Node';
-import ConfigProvider from '../providers/ConfigProvider';
-import LoggerProvider from '../providers/LoggerProvider';
-import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
-import NodeCollectionProvider from '../providers/NodeCollectionProvider';
-import NodeFactoryProvider from '../providers/NodeFactoryProvider';
-import createAppContainerStore from '../utils/createAppContainerStore';
+import Node from '../../models/Node';
+import ConfigProvider from '../../providers/ConfigProvider';
+import LoggerProvider from '../../providers/LoggerProvider';
+import MongoDbClientServiceProvider from '../../providers/MongoDbClientProvider';
+import NodeCollectionProvider from '../../providers/NodeCollectionProvider';
+import NodeFactoryProvider from '../../providers/NodeFactoryProvider';
+import createAppContainerStore from '../../utils/createAppContainerStore';
 
-import NodeService from './NodeService';
+import MongoNodeService from './MongoNodeService';
 
 const appContainerStore = createAppContainerStore();
 
 const setup = () => {
   const appContainer = appContainerStore.getAppContainer();
 
-  const nodeService = appContainer.build(NodeService);
+  const nodeService = appContainer.build(MongoNodeService);
 
   return {
     mongoNodeCollection: appContainer.resolve<Collection>('mongoNodeCollection'),
@@ -23,7 +23,7 @@ const setup = () => {
   };
 };
 
-describe('services/NodeService', () => {
+describe('services/NodeService/MongoNodeService', () => {
   beforeAll(async () => {
     await appContainerStore
       .getAppContainer()

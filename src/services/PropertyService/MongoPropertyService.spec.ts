@@ -1,21 +1,21 @@
 import { Collection } from 'mongodb';
 
-import Property from '../models/Property';
-import ConfigProvider from '../providers/ConfigProvider';
-import LoggerProvider from '../providers/LoggerProvider';
-import MongoDbClientServiceProvider from '../providers/MongoDbClientProvider';
-import PropertyCollectionProvider from '../providers/PropertyCollectionProvider';
-import PropertyFactoryProvider from '../providers/PropertyFactoryProvider';
-import createAppContainerStore from '../utils/createAppContainerStore';
+import Property from '../../models/Property';
+import ConfigProvider from '../../providers/ConfigProvider';
+import LoggerProvider from '../../providers/LoggerProvider';
+import MongoDbClientServiceProvider from '../../providers/MongoDbClientProvider';
+import PropertyCollectionProvider from '../../providers/PropertyCollectionProvider';
+import PropertyFactoryProvider from '../../providers/PropertyFactoryProvider';
+import createAppContainerStore from '../../utils/createAppContainerStore';
 
-import PropertyService from './PropertyService';
+import MongoPropertyService from './MongoPropertyService';
 
 const appContainerStore = createAppContainerStore();
 
 const setup = () => {
   const appContainer = appContainerStore.getAppContainer();
 
-  const propertyService = appContainer.build(PropertyService);
+  const propertyService = appContainer.build(MongoPropertyService);
 
   return {
     mongoPropertyCollection: appContainer.resolve<Collection>('mongoPropertyCollection'),
@@ -23,7 +23,7 @@ const setup = () => {
   };
 };
 
-describe('services/PropertyService', () => {
+describe('services/PropertyService/MongoPropertyService', () => {
   beforeAll(async () => {
     await appContainerStore
       .getAppContainer()
