@@ -33,6 +33,14 @@ const createHomieSubscriptionManager = ({
   mqttRouter: MQTTRouter;
 }): HomieSubscriptionManager =>
   Object.freeze({
+    async addDeviceDiscoverySubscription(callback) {
+      if (!mqttRouter.hasTopicRoute(TopicPatterns.DISCOVER_DEVICES)) {
+        await mqttRouter.addTopicRoute(TopicPatterns.DISCOVER_DEVICES, callback);
+      }
+
+      return this;
+    },
+
     async addDeviceSubscription(uniqueFields: DeviceUniqueFields, callback) {
       const topic = mqttPattern.fill(TopicPatterns.DEVICE_ATTRIBUTES, { deviceId: uniqueFields.id });
 

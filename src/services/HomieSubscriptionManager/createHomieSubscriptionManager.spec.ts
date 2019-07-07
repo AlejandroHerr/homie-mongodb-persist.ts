@@ -27,7 +27,7 @@ const setup = () => {
   };
 };
 
-describe('srvices/DeviceService', () => {
+describe('services/HomieSubscriptionManager/createHomeSubscriptionManager', () => {
   beforeAll(async () => {
     await appContainerStore
       .getAppContainer()
@@ -45,6 +45,20 @@ describe('srvices/DeviceService', () => {
     const appContainer = appContainerStore.getAppContainer();
 
     await appContainer.dispose();
+  });
+
+  describe('addDeviceDiscoverySubscription', () => {
+    it('should add a subscription to discover devices', async () => {
+      const { homieSubscriptionManager, mqttRouter } = setup();
+
+      await homieSubscriptionManager.addDeviceDiscoverySubscription(noop);
+
+      expect(mqttRouter.hasTopicRoute(`homie/+deviceId/$homie`)).toBeTruthy();
+
+      await homieSubscriptionManager.addDeviceDiscoverySubscription(noop);
+
+      expect(mqttRouter.hasTopicRoute(`homie/+deviceId/$homie`)).toBeTruthy();
+    });
   });
 
   describe('addDeviceSubscription', () => {
