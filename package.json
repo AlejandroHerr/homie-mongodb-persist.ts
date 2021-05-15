@@ -18,8 +18,8 @@
   "repository": "git@github.com:AlejandroHerr/homie-iot-mongodb.ts.git",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "24.0.15",
-    "@types/node": "11.13.14",
+    "@types/jest": "24.9.1",
+    "@types/node": "11.15.54",
     "@typescript-eslint/eslint-plugin": "1.10.2",
     "@typescript-eslint/parser": "1.10.2",
     "commitizen": "3.1.1",
